@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p raw/gdc_vault raw/articles raw/game_manuals raw/videos_scripts)",
+      "Bash(mkdir -p wiki/games wiki/concepts wiki/mechanics wiki/sources wiki/comparisons)",
+      "Bash(mkdir -p assets)",
+      "Bash(touch CLAUDE.md wiki/index.md wiki/log.md)"
+    ]
+  }
+}

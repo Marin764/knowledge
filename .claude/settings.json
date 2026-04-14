@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find \"c:/Users/hutingrong/Desktop/know/raw/gdc_vault\" -type f -name \"*.md\" -exec grep -l \"clippings\" {} \\\\;)",
+      "Bash(find \"c:/Users/hutingrong/Desktop/know/raw/videos_scripts\" -type f -name \"*.md\" -exec grep -l \"clippings\" {} \\\\;)",
+      "Bash(find \"c:/Users/hutingrong/Desktop/know/\" -type f -name \"*.md\" -exec grep -l \"clippings\" {} \\\\;)",
+      "Bash(mv wiki/sources/adapting-game-interface-smaller-screens.md wiki/sources/小屏幕游戏界面适配.md)",
+      "Bash(mv wiki/sources/apple-hig-buttons.md wiki/sources/Apple-HIG-按钮.md)",
+      "Bash(mv wiki/sources/apple-hig-game-controls.md wiki/sources/Apple-HIG-游戏控制.md)",
+      "Bash(mv wiki/sources/apple-hig-going-full-screen.md wiki/sources/Apple-HIG-进入全屏.md)",
+      "Bash(mv wiki/sources/apple-hig-menus.md wiki/sources/Apple-HIG-菜单.md)",
+      "Bash(mv wiki/concepts/button-states.md wiki/concepts/按钮交互状态.md)",
+      "Bash(mv wiki/concepts/cross-platform-play.md wiki/concepts/跨平台联机.md)",
+      "Bash(mv wiki/concepts/dynamic-ui-scaling.md wiki/concepts/动态UI适配.md)",
+      "Bash(mv wiki/concepts/haptic-feedback.md wiki/concepts/触觉反馈.md)",
+      "Bash(mv wiki/concepts/input-balancing.md wiki/concepts/跨端输入平衡.md)",
+      "Bash(git fetch:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}

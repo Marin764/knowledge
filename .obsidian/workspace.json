@@ -1,0 +1,213 @@
+{
+  "main": {
+    "id": "dc65930b3337e9aa",
+    "type": "split",
+    "children": [
+      {
+        "id": "05ad6f47f288175e",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "05d3cef357729b56",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "新标签页"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "d455785dd670d5fb",
+    "type": "split",
+    "children": [
+      {
+        "id": "9c1a8298ce6514df",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "da6e2d95404a75ba",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "文件列表"
+            }
+          },
+          {
+            "id": "9e4088800d462ef2",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "搜索"
+            }
+          },
+          {
+            "id": "e85845c88a20279a",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "书签"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "62d603b30b015857",
+    "type": "split",
+    "children": [
+      {
+        "id": "2e6627d4c4f1ff18",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "33a212966fcd8329",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "raw/articles/【游戏交互】手游适配设计.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "【游戏交互】手游适配设计 的反向链接列表"
+            }
+          },
+          {
+            "id": "0156f8c323426801",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "raw/articles/【游戏交互】手游适配设计.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "【游戏交互】手游适配设计 的出链列表"
+            }
+          },
+          {
+            "id": "041b42948a62a4c5",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "标签"
+            }
+          },
+          {
+            "id": "a44402769a8817d1",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "添加笔记属性"
+            }
+          },
+          {
+            "id": "2d2b6c9093ed1b01",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "raw/articles/【游戏交互】手游适配设计.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "【游戏交互】手游适配设计 的大纲"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:打开快速切换": false,
+      "graph:查看关系图谱": false,
+      "canvas:新建白板": false,
+      "daily-notes:打开/创建今天的日记": false,
+      "templates:插入模板": false,
+      "command-palette:打开命令面板": false,
+      "bases:新建数据库": false
+    }
+  },
+  "active": "05d3cef357729b56",
+  "lastOpenFiles": [
+    "wiki/sources/Apple-HIG-按钮.md",
+    "raw/game_manuals/菜单.md",
+    "未命名.canvas",
+    "wiki/concepts/UI锚点.md",
+    "wiki/concepts/安全区域适配.md",
+    "wiki/concepts/多输入方式适配.md",
+    "wiki/concepts/最小触控热区.md",
+    "wiki/concepts/跨端输入平衡.md",
+    "wiki/concepts/触觉反馈.md",
+    "wiki/concepts/动态UI适配.md",
+    "wiki/concepts/跨平台联机.md",
+    "wiki/concepts/按钮交互状态.md",
+    "未命名 1.canvas",
+    "wiki/sources/跨平台联机的崛起.md",
+    "wiki/sources/针对游戏设计.md",
+    "wiki/sources/Apple-HIG-排版.md",
+    "wiki/sources/Apple-HIG-菜单.md",
+    "wiki/sources/Apple-HIG-进入全屏.md",
+    "wiki/sources/Apple-HIG-游戏控制.md",
+    "wiki/sources/小屏幕游戏界面适配.md",
+    "raw/game_manuals/排版设计.md",
+    "raw/game_manuals/全屏体验.md",
+    "raw/game_manuals/游戏操作.md",
+    "raw/game_manuals/针对小屏幕适配游戏界面.md",
+    "raw/articles/Core Haptics.md",
+    "raw/articles/跨平台游戏的兴起：利弊与对游戏设计的影响.md",
+    "raw/articles/核心触觉.md",
+    "Clippings"
+  ]
+}
