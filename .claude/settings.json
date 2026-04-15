@@ -16,7 +16,13 @@
       "Bash(mv wiki/concepts/input-balancing.md wiki/concepts/跨端输入平衡.md)",
       "Bash(git fetch:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git config:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\hutingrong\\Desktop\\know"
     ]
   }
 }

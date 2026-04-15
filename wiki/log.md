@@ -21,3 +21,8 @@
 - Source: Clippings/小屏幕游戏界面适配.md, Clippings/按钮.md, Clippings/针对游戏设计.md
 - Pages created: sources/adapting-game-interface-smaller-screens.md, sources/apple-hig-buttons.md, sources/designing-for-games.md, concepts/最小触控热区.md, concepts/按钮交互状态.md, concepts/触觉反馈.md, concepts/多输入方式适配.md, concepts/动态UI适配.md
 - Contradictions: none
+## [2026-04-15] ingest | 沉浸式交互让游戏更加迷人 - 腾讯游戏学堂
+- Source: raw/articles/沉浸式交互让游戏更加迷人.md
+- Pages created: sources/沉浸式交互让游戏更加迷人.md, concepts/拟物化交互.md, concepts/潜意识交互.md, concepts/沉浸式反馈.md, concepts/子弹时间.md, games/Metro归来.md
+- Pages updated: wiki/index.md
+- Contradictions: none

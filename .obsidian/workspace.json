@@ -11,10 +11,10 @@
             "id": "05d3cef357729b56",
             "type": "leaf",
             "state": {
-              "type": "empty",
+              "type": "graph",
               "state": {},
-              "icon": "lucide-file",
-              "title": "新标签页"
+              "icon": "lucide-git-fork",
+              "title": "关系图谱"
             }
           }
         ]
@@ -181,6 +181,16 @@
   },
   "active": "05d3cef357729b56",
   "lastOpenFiles": [
+    "wiki/games/Metro归来.md",
+    "wiki/concepts/子弹时间.md",
+    "wiki/concepts/沉浸式反馈.md",
+    "wiki/concepts/潜意识交互.md",
+    "wiki/concepts/拟物化交互.md",
+    "wiki/sources/沉浸式交互让游戏更加迷人.md",
+    "wiki/sources/沉浸式交互让游戏更加迷人.md.tmp.40560.1776219996935",
+    "Clippings/沉浸式交互让游戏更加迷人 - 腾讯游戏学堂.md",
+    "raw/articles/沉浸式交互让游戏更加迷人.md",
+    "raw/articles/Karpathy-LLM知识库方法论.md",
     "wiki/sources/Apple-HIG-按钮.md",
     "raw/game_manuals/菜单.md",
     "未命名.canvas",
@@ -200,14 +210,6 @@
     "wiki/sources/Apple-HIG-菜单.md",
     "wiki/sources/Apple-HIG-进入全屏.md",
     "wiki/sources/Apple-HIG-游戏控制.md",
-    "wiki/sources/小屏幕游戏界面适配.md",
-    "raw/game_manuals/排版设计.md",
-    "raw/game_manuals/全屏体验.md",
-    "raw/game_manuals/游戏操作.md",
-    "raw/game_manuals/针对小屏幕适配游戏界面.md",
-    "raw/articles/Core Haptics.md",
-    "raw/articles/跨平台游戏的兴起：利弊与对游戏设计的影响.md",
-    "raw/articles/核心触觉.md",
     "Clippings"
   ]
 }
