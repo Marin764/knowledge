@@ -7,6 +7,11 @@
 ```
 know/                          # 根目录
 ├── CLAUDE.md                 # 本文件 - Schema 定义
+├── scripts/                  # 工具脚本
+│   ├── lint.py               # 健康检查脚本（每次提交自动运行）
+│   ├── generate_slides.py    # Marp 幻灯片生成器
+│   └── wiki.sh               # 便捷命令入口
+├── exports/                   # AI 生成的可交付物（幻灯片/图表）
 ├── wiki/
 │   ├── index.md              # 知识库总索引（自动维护）
 │   ├── log.md                # 操作日志（纯追加）
@@ -161,7 +166,7 @@ status: processed
 **格式**：回答可以是纯文本，也可以是：
 - Markdown 页面
 - 对比表格
-- Marp 幻灯片
+- 包含 `---` 分页符的 Marp 幻灯片文件（当用户要求总结时可直接生成，存放在 `exports/` 目录）
 - 图表代码
 
 ### 4.3 健康检查 (Lint)
@@ -247,7 +252,18 @@ Last updated: 2026-04-13 | Pages: X | Sources: X
 
 ## 8. 工具约定
 
-- **搜索**：当 wiki 页面超过 100 个时，建议使用 qmd 搜索
+### 8.1 脚本工具
+
+| 脚本 | 用途 | 调用方式 |
+|------|------|----------|
+| `scripts/lint.js` | 健康检查：死链接、孤立页面、Frontmatter校验 | `node scripts/lint.js` |
+| `scripts/generate_slides.js` | Marp幻灯片生成 | `node scripts/generate_slides.js --all` |
+| `scripts/youtube.sh` | 抓取 YouTube 字幕并转为 Markdown | `bash scripts/youtube.sh <url> [标题]` |
+| `scripts/wiki.sh` | 便捷命令入口 | `bash scripts/wiki.sh <command>` |
+
+**Git Hooks**：`.git/hooks/pre-commit` 会在每次 `git commit` 时自动运行 `lint.py`，确保提交内容健康。
+
+**搜索**：当 wiki 页面超过 100 个时，建议使用 qmd 搜索
 - **可视化**：需要时用 Mermaid 画概念关系图
 - **幻灯片**：需要输出演示时用 Marp 格式
 
