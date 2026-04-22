@@ -1,6 +1,6 @@
-# Game Interaction Design Wiki - Schema
+# Game Design Wiki - Schema
 
-> 这是整个知识库的"宪法"，定义了 AI 维护者的行为规范和工作流。
+> 这是整个知识库的"宪法"，定义了 AI 维护者的行为规范和工作流。本知识库以**游戏设计**相关的知识为主，涵盖但不局限于游戏交互设计、关卡设计、系统设计、叙事设计等领域。
 
 ## 1. 目录结构规范
 
@@ -15,16 +15,22 @@ know/                          # 根目录
 ├── wiki/
 │   ├── index.md              # 知识库总索引（自动维护）
 │   ├── log.md                # 操作日志（纯追加）
-│   ├── games/                # 游戏实体页面 (e.g., 塞尔达传说-旷野之息.md)
-│   ├── concepts/             # 交互设计概念 (e.g., hitstop.md, coyote-time.md)
-│   ├── mechanics/            # 具体机制设计 (e.g., 锁定系统.md, 镜头跟随.md)
-│   ├── source/               # 来源摘要 (每份原始资料一个)
+│   ├── games/                # 游戏实体页面/枢纽 (e.g., 王者荣耀.md)
+│   ├── concepts/             # 交互设计概念 (e.g., hitstop.md)
+│   ├── mechanics/            # 具体机制理论 (e.g., 战斗通行证系统.md)
+│   ├── analysis/             # [新增] 专项子系统拆解 (e.g., 王者荣耀-战令系统.md)
+│   ├── source/               # 来源摘要
 │   └── comparisons/           # 跨游戏对比分析
 ├── raw/                      # 原始资料库（不可变，AI 只读）
 │   ├── gdc_vault/            # GDC 演讲/总结
 │   ├── articles/             # 博客文章
 │   ├── game_manuals/        # 游戏设计文档
-│   └── video_scripts/        # 视频文字稿
+│   ├── video_scripts/        # 视频文字稿
+│   └── screenshots/          # [新增] 原始截图
+├── skills/                   # [新增] AI 技能文件库
+│   ├── README.md             # 技能索引与调用规则
+│   ├── 01-ui_analysis.md     # UI 截图分析 Skill
+│   └── 02-battle_pass_spec.md# 战令系统交互规范生成 Skill
 └── assets/                   # 图片/动图/GIF
 ```
 
@@ -120,7 +126,29 @@ key_points:
 game_focus: [游戏名]
 concepts_extracted:
   - wiki/concepts/xxx.md
-status: processed
+---
+```
+
+### ui_specs/ (UI 截图分析)
+
+```yaml
+---
+type: ui_spec
+title: "页面名称"
+game: "游戏名"
+screen_type: [hud, menu, loading, inventory]
+created: 2026-04-21
+updated: 2026-04-21
+source_image: "raw/screenshots/xxx.png"
+components:
+  - name: "组件名"
+    description: "功能简述"
+related_concepts:
+  - wiki/concepts/xxx.md
+related_mechanics:
+  - wiki/mechanics/xxx.md
+tags: [layout, alignment, feedback]
+status: active
 ---
 ```
 
@@ -138,8 +166,10 @@ status: processed
 
 **完整流程**：
 1. 读取原始文档 `raw/xxx`
-2. 移动文件到正确分类（`articles/`、`game_manuals/`、`gdc_vault/`、`video_scripts/`）
-3. 向用户确认 2-3 个核心要点（摘要 + 关键论断）
+2. **语言处理**：如果原始文档是英文，处理时必须进行翻译，提取和生成的 wiki 内容（包括 source、games、concepts、mechanics）必须全部使用中文。英文原文标题可以在 frontmatter 的 `title_en` 中保留。
+3. **单篇处理原则**：无论用户要求处理多少篇文章，AI 都必须**一篇一篇地串行读取和处理**，严禁一次性读取多篇文章，以免超出上下文限制或导致信息混淆。
+4. 移动文件到正确分类（`articles/`、`game_manuals/`、`gdc_vault/`、`video_scripts/`）
+5. 向用户确认 2-3 个核心要点（摘要 + 关键论断）
 4. **完善 tags**：将导入插件生成的通用 `clippings` tag 替换为有意义的标签
    - 根据文档内容提取 2-4 个相关标签
    - 常用标签参考：`game-design`, `ui`, `input`, `feedback`, `platform`, `mobile`, `accessibility`, `typography`, `haptics`, `layout`, `adaptation`
@@ -184,6 +214,18 @@ status: processed
 
 **输出**：报告 + 修复建议
 
+### 4.4 UI 分析与模块化存储 (UI Analysis)
+
+**触发**：用户说 `analyze_ui <image>` 或 `分析UI <图片>`
+
+**基础流程**：
+1. **预处理**：运行 `python scripts/preprocess_images.py` 执行去重与缩放。
+2. **视觉逆向工程**：按照“层级、布局、交互、UX、组件抽象”五个维度输出。
+3. **枢纽架构 (Hub-and-Spoke)**：
+    - **禁止过度堆砌**：核心游戏页面保留概况，具体的系统分析（如战令、商城）应剥离至 `wiki/analysis/` 目录。
+    - **双向锚定**：在 Game Hub 页建立链接指向 Analysis 子页，同时在 Analysis 子页链接回母游戏母页。
+4. **归档**：保存到 `wiki/analysis/`，并确保不在 `wiki/index.md` 首页过度平铺。
+
 ## 5. 索引系统
 
 ### wiki/index.md 结构
@@ -219,17 +261,17 @@ Last updated: 2026-04-13 | Pages: X | Sources: X
 - Contradictions: none
 ```
 
-## 6. 写作风格约定
+## 6. 写作风格与卫生约定
 
-- **文件名强制中文**：无论笔记内容是中文还是英文，所有 wiki/ 和 raw/ 文件名必须保存为中文
-  - 正确：`游戏控制.md`、`触觉反馈.md`、`Core Haptics.md`
-  - 错误：`game-controls.md`、`haptic-feedback.md`
-  - 英文名称在 frontmatter 的 `title_en` 或 `aliases` 中标注
-- **Wikilink**：使用 `[[wiki/games/xxx.md]]` 而非相对路径
-- **引用格式**：每个论断必须注明来源 `[来源]`
-- **中文优先**：游戏名/概念名用中文，英文名在 alias 或 title_en 中标注
-- **动图引用**：用 `![描述](assets/xxx.gif)` 格式引用 GIF
-- **代码块**：如果涉及技术实现，用 fenced code block 包裹
+- **文件名强制中文**：所有 wiki/ 和 raw/ 文件名必须保存为中文。
+- **Wikilink (路径校准)**：
+    - **禁止绝对前缀**：在 `wiki/` 目录内部文件互相跳转时，**严禁**使用 `[[wiki/xxx]]` 前缀，以防触发路径解析 Bug 产生 `wiki/wiki/` 幽灵目录。
+    - **正确格式**：使用相对于 `wiki/` 根目录的路径，即 `[[目录/文件名.md]]`。
+    - **示例**：在 `index.md` 中链接王者，应使用 `[[games/王者荣耀.md]]`。
+- **去重原则**：同名称/同实体的词条全库仅保留一个。
+- ** Stub 清理**：禁止创建仅含标题的空白笔记。内容不足 20 字的 placeholder 应在 Ingest 阶段直接合并或删除。
+- **引用格式**：每个论断必须注明来源 `[来源]`。
+- **动图引用**：用 `![描述](assets/xxx.gif)` 格式引用 GIF。
 
 ## 7. 特定领域约定
 
@@ -260,6 +302,7 @@ Last updated: 2026-04-13 | Pages: X | Sources: X
 | `scripts/generate_slides.js` | Marp幻灯片生成 | `node scripts/generate_slides.js --all` |
 | `scripts/youtube.sh` | 抓取 YouTube 字幕并转为 Markdown | `bash scripts/youtube.sh <url> [标题]` |
 | `scripts/wiki.sh` | 便捷命令入口 | `bash scripts/wiki.sh <command>` |
+| `scripts/preprocess_images.py` | 截图预处理：去重、缩放、压缩 | `python scripts/preprocess_images.py` |
 
 **Git Hooks**：`.git/hooks/pre-commit` 会在每次 `git commit` 时自动运行 `lint.py`，确保提交内容健康。
 
@@ -267,6 +310,24 @@ Last updated: 2026-04-13 | Pages: X | Sources: X
 - **可视化**：需要时用 Mermaid 画概念关系图
 - **幻灯片**：需要输出演示时用 Marp 格式
 
+### 8.2 AI 技能库 (Skills)
+
+**目录**：`skills/`
+
+**定义**：Skills 是供 AI 代理人调用的**标准化任务说明文件**。每个 Skill 定义了在特定场景下的分析框架、输出格式、质量检查标准与必须遵循的强约束。
+
+| 技能文件 | 触发场景 | 输出目标 |
+|------|------|------|
+| `skills/01-ui_analysis.md` | 用户提供游戏 UI 截图 | 五维度分析报告，录入 `wiki/analysis/` |
+| `skills/02-game_system_ux_spec.md` | 用户要求生成任意游戏系统交互规范（战令/商城/抽卡/公会等） | 正式规范文档，保存至 `exports/` |
+
+**调用规则**（强制）：
+- AI 在执行相关任务前，**必须完整读取对应 Skill 文件**，以 Skill 中的模块结构为输出骨架。
+- Skills 中定义"必须覆盖"的内容不可省略。
+- 新增 Skill 时，必须同步更新 `skills/README.md` 中的技能索引。
+
+**版本管理**：Skill 文件内容的重大更改须在文件末尾追加变更日志，格式：`<!-- v1.1: 新增了模块 X -->`。
+
 ---
 
-*Schema version: 1.1 | Last updated: 2026-04-14*
+*Schema version: 1.6 | Last updated: 2026-04-21*

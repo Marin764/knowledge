@@ -2,6 +2,8 @@
 import sys
 import os
 import re
+import time
+import random
 import json
 import urllib.request
 from pathlib import Path
@@ -15,6 +17,7 @@ if sys.platform == 'win32':
 
 RAW_YOUTUBE_DIR = Path("raw/youtube")
 LINKS_FILE = Path("youtu/链接.txt")
+COOKIES_FILE = Path("cookies.txt")
 
 def extract_video_id(url):
     parsed = urlparse(url.strip())
@@ -29,55 +32,125 @@ def extract_video_id(url):
 
 def format_time(seconds):
     m, s = divmod(int(seconds), 60)
-    return f"{m:02d}:{s:02d}"
+    return f"{m:02d}:{s:02f}"[0:-3]
 
-def fetch_with_free_api(video_id):
-    """Fallback using a free public API when IP is blocked"""
+def load_cookies_as_session(cookies_file):
+    """将 cookies.txt 转换为 requests Session"""
     try:
-        # Use Piped API alternative which proxies requests
+        import requests
+        from http.cookiejar import CookieJar, Cookie
+
+        session = requests.Session()
+        jar = CookieJar()
+                    cookie = Cookie(
+                        version=0,
+                        name=name,
+                        value=value,
+                        port=None,
+                        port_specified=False,
+                        domain=domain,
+                        domain_specified=bool(domain),
+                        domain_initial_dot=domain.startswith('.'),
+                        path=path,
+                        path_specified=bool(path),
+                        secure=secure == 'TRUE',
+                        expires=None if expires == '0' else float(expires),
+                        discard=True,
+                        comment=None,
+                        comment_url=None,
+                        rest={},
+                        rfc2109=False
+                    )
+                    jar.set_cookie(cookie)
+
+        session.cookies = jar
+        return session
+    except Exception as e:
+        print(f"    加载 cookies 失败: {e}")
+        return None
+
+def fetch_with_transcript_api(video_id):
+    """使用 youtube-transcript-api + Cookies 获取字幕"""
+    try:
+        from youtube_transcript_api import YouTubeTranscriptApi
+        from youtube_transcript_api._errors import (
+            TranscriptsDisabled, NoTranscriptFound, VideoUnavailable,
+            RequestBlocked, IpBlocked, CouldNotRetrieveTranscript
+        )
+
+        if COOKIES_FILE.exists():
+            session = load_cookies_as_session(COOKIES_FILE)
+            if session:
+                api = YouTubeTranscriptApi(http_client=session)
+            else:
+                api = YouTubeTranscriptApi()
+        else:
+            api = YouTubeTranscriptApi()
+
+        transcript = api.fetch(
+            video_id,
+            languages=['zh-Hans', 'zh-Hant', 'en']
+        )
+
+        # 格式化字幕
+        lines = []
+        for entry in transcript:
+            ts = format_time(entry.start)
+            text = entry.text.replace('\n', ' ')
+            lines.append(f"[{ts}] {text}")
+
+        return "\n".join(lines)
+
+    except (TranscriptsDisabled, NoTranscriptFound, VideoUnavailable,
+            RequestBlocked, IpBlocked, CouldNotRetrieveTranscript) as e:
+        print(f"    字幕不可用: {e}")
+        return None
+    except Exception as e:
+        print(f"    youtube-transcript-api 失败: {e}")
+        return None
+
+def fetch_with_piped_api(video_id):
+    """Fallback: 使用 Piped API (不需要认证)"""
+    try:
         url = f"https://api.piped.projectsegfau.lt/streams/{video_id}"
         req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
         with urllib.request.urlopen(req) as response:
             data = json.loads(response.read().decode())
-            
+
         subtitles = data.get('subtitles', [])
         if not subtitles:
             return None
-            
-        # Try to find ZH or EN
+
         sub_url = None
         for sub in subtitles:
             if 'zh' in sub.get('code', '').lower():
                 sub_url = sub.get('url')
                 break
-        
+
         if not sub_url:
             for sub in subtitles:
                 if 'en' in sub.get('code', '').lower():
                     sub_url = sub.get('url')
                     break
-                    
+
         if not sub_url and subtitles:
             sub_url = subtitles[0].get('url')
-            
+
         if not sub_url:
             return None
-            
-        # Download the VTT content
+
         req = urllib.request.Request(sub_url, headers={'User-Agent': 'Mozilla/5.0'})
         with urllib.request.urlopen(req) as response:
             vtt_content = response.read().decode('utf-8')
-            
-        # Parse simple VTT manually
+
         lines = []
         block = []
         curr_time = 0
-        
+
         for line in vtt_content.split('\n'):
             line = line.strip()
             if not line or '-->' in line or line.startswith('WEBVTT') or line.startswith('Kind:') or line.startswith('Language:'):
                 if '-->' in line:
-                    # Try to extract seconds
                     try:
                         ts = line.split('-->')[0].strip()
                         parts = ts.split(':')
@@ -85,7 +158,7 @@ def fetch_with_free_api(video_id):
                         m = int(parts[-2]) if len(parts) > 1 else 0
                         h = int(parts[-3]) if len(parts) > 2 else 0
                         new_time = h * 3600 + m * 60 + s
-                        
+
                         if new_time - curr_time > 60 and block:
                             lines.append(f"[{format_time(curr_time)}] {' '.join(block)}")
                             block = []
@@ -93,18 +166,18 @@ def fetch_with_free_api(video_id):
                     except:
                         pass
                 continue
-                
+
             text = re.sub(r'<[^>]+>', '', line).strip()
             if text:
                 block.append(text)
-                
+
         if block:
             lines.append(f"[{format_time(curr_time)}] {' '.join(block)}")
-            
+
         return "\n\n".join(lines)
-            
+
     except Exception as e:
-        print(f"  Piped API failed: {e}")
+        print(f"    Piped API 失败: {e}")
         return None
 
 def save_md(vid, title, content, url):
@@ -127,8 +200,13 @@ def main():
 
     updated_lines = []
     processed = 0
+    failed = 0
 
     print(f"[*] Processing {LINKS_FILE} ({len(lines)} lines)")
+    if COOKIES_FILE.exists():
+        print(f"[*] Using cookies: {COOKIES_FILE}")
+    else:
+        print("[*] No cookies.txt found, using Piped API fallback")
 
     for line in lines:
         line_stripped = line.strip()
@@ -150,21 +228,40 @@ def main():
         print(f"\n[*] {url}")
         print(f"    title: {title}")
 
-        print("  Trying Piped API (IP block bypass)...")
-        content = fetch_with_free_api(vid)
-            
+        content = None
+
+        # 优先使用 youtube-transcript-api + Cookies
+        if COOKIES_FILE.exists():
+            print("  Trying youtube-transcript-api + Cookies...")
+            content = fetch_with_transcript_api(vid)
+
+        # 如果失败，使用 Piped API 作为备用
+        if not content:
+            print("  Trying Piped API (fallback)...")
+            content = fetch_with_piped_api(vid)
+
         if content:
             path = save_md(vid, title, content, url)
             print(f"    SAVED: {path}")
             updated_lines.append(f"{url} - {title} - [已处理]\n")
             processed += 1
+
+            # 加入随机延迟 (Jitter) 避免被封
+            delay = random.uniform(4.0, 12.0)
+            print(f"    随机休眠 {delay:.2f} 秒...")
+            time.sleep(delay)
         else:
+            print("    FAILED: 无法获取字幕")
             updated_lines.append(line)
+            failed += 1
+            # 被风控时休眠更长时间
+            print("    休眠 60 秒...")
+            time.sleep(60)
 
     with open(LINKS_FILE, "w", encoding="utf-8") as f:
         f.writelines(updated_lines)
 
-    print(f"\n[DONE] Processed: {processed}")
+    print(f"\n[DONE] Processed: {processed}, Failed: {failed}")
 
 if __name__ == "__main__":
     main()

@@ -7,7 +7,10 @@ const REQUIRED_FRONTMATTER = {
   game: ['type', 'title', 'status'],
   concept: ['type', 'title', 'status'],
   mechanics: ['type', 'title', 'status'],
-  source: ['type', 'title', 'status']
+  source: ['type', 'title', 'status'],
+  ui_spec: ['type', 'title', 'status'],
+  comparison: ['type', 'title', 'status'],
+  ui_analysis: ['type', 'title', 'status']
 };
 
 function getAllMdFiles(dir, fileList = []) {
@@ -64,10 +67,13 @@ function extractWikilinks(content) {
 }
 
 function lint() {
-  const files = getAllMdFiles(WIKI_DIR);
+  const EXPORTS_DIR = path.join(__dirname, '../exports');
+  const wikiFiles = getAllMdFiles(WIKI_DIR);
+  const exportFiles = getAllMdFiles(EXPORTS_DIR);
+  const allFiles = [...wikiFiles, ...exportFiles];
   
   // Create relative posix paths for easier comparison
-  const filePaths = files.map(f => {
+  const filePaths = allFiles.map(f => {
     const rel = path.relative(path.join(__dirname, '..'), f);
     return rel.split(path.sep).join('/');
   });
@@ -89,8 +95,8 @@ function lint() {
   incomingLinks['wiki/index.md'] = 1;
   incomingLinks['wiki/log.md'] = 1;
 
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
+  for (let i = 0; i < wikiFiles.length; i++) {
+    const file = wikiFiles[i];
     const pathStr = filePaths[i];
     const content = fs.readFileSync(file, 'utf8');
     

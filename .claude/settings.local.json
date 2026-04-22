@@ -4,7 +4,33 @@
       "Bash(mkdir -p raw/gdc_vault raw/articles raw/game_manuals raw/videos_scripts)",
       "Bash(mkdir -p wiki/games wiki/concepts wiki/mechanics wiki/sources wiki/comparisons)",
       "Bash(mkdir -p assets)",
-      "Bash(touch CLAUDE.md wiki/index.md wiki/log.md)"
+      "Bash(touch CLAUDE.md wiki/index.md wiki/log.md)",
+      "Bash(pip install *)",
+      "Bash(python -m pip install -q youtube_transcript-api)",
+      "Bash(python scripts/youtube_batch.py)",
+      "Bash(/c/Users/hutingrong/AppData/Local/Microsoft/WindowsApps/python scripts/youtube_batch.py)",
+      "Bash(/c/Users/hutingrong/AppData/Local/Microsoft/WindowsApps/python --version)",
+      "Bash(where python *)",
+      "Bash(node scripts/youtube_batch.js)",
+      "Bash(python -c \"import youtube_transcript_api; print\\('ok'\\)\")",
+      "Bash(/c/Users/hutingrong/AppData/Local/Microsoft/WindowsApps/python3 --version)",
+      "Read(//c/Users/hutingrong/AppData/Local/Microsoft/WindowsApps//**)",
+      "Bash(winget --version)",
+      "Bash(scoop --version)",
+      "Bash(winget install *)",
+      "Bash(/c/Users/hutingrong/AppData/Local/Programs/Python/Python312/python.exe -m pip install youtube-transcript-api)",
+      "Bash(/c/Users/hutingrong/AppData/Local/Programs/Python/Python312/python.exe scripts/youtube_batch.py)",
+      "Bash(/c/Users/hutingrong/AppData/Local/Programs/Python/Python312/python.exe -c \"import youtube_transcript_api; help\\(youtube_transcript_api.YouTubeTranscriptApi\\)\")",
+      "Bash(/c/Users/hutingrong/AppData/Local/Programs/Python/Python312/python.exe -m pip install yt-dlp webvtt-py)",
+      "Bash(/c/Users/hutingrong/AppData/Local/Programs/Python/Python312/python.exe scripts/yt_dlp_fetch.py)",
+      "Bash(python3 scripts/youtube_batch.py)",
+      "Bash(python -c \"import scripts.youtube_batch\")",
+      "Bash(python -c \"print\\('hello'\\)\")",
+      "Bash(cmd.exe /c python scripts/youtube_batch.py)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\hutingrong\\Desktop\\know",
+      "c:\\Users\\hutingrong\\Desktop\\know\\raw"
     ]
   }
 }

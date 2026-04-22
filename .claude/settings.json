@@ -19,10 +19,26 @@
       "Bash(git commit:*)",
       "Bash(git config:*)",
       "Bash(git branch:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(grep -l 'related_concepts' wiki/games/*.md wiki/concepts/*.md)",
+      "Bash(grep -l 'related_games' wiki/games/*.md wiki/concepts/*.md)",
+      "Bash(grep -n '\\\\[来源.*\\\\]' wiki/concepts/*.md wiki/games/*.md)",
+      "Bash(sed -i 's/\\\\[来源: 死亡空间\\\\]/[来源: 沉浸式交互让游戏更加迷人.md]/g' wiki/concepts/拟物化交互.md)",
+      "Bash(sed -i 's/\\\\[来源: Metro归来\\\\]/[来源: 沉浸式交互让游戏更加迷人.md]/g' wiki/concepts/拟物化交互.md)",
+      "Bash(sed -i 's/\\\\[来源: BLAIR WITCH\\\\]/[来源: 沉浸式交互让游戏更加迷人.md]/g' wiki/concepts/拟物化交互.md)",
+      "Bash(sed -i 's/### 2. 场景边缘商人（COC）/### 2. 场景边缘商人（COC）\\\\n没有角色控制，但将功能入口融入场景 [来源: 沉浸式交互让游戏更加迷人.md]：/g' wiki/concepts/潜意识交互.md)",
+      "Bash(sed -i 's/没有角色控制，但将功能入口融入场景：//g' wiki/concepts/潜意识交互.md)",
+      "Bash(sed -i 's/### 3. 角色创建情境化（全境封锁1）/### 3. 角色创建情境化（全境封锁1）\\\\n- **传统设计**：CG后直接出现捏人界面\\\\n- **潜意识设计**：环顾环境 → 镜头落入角色背后 → 车窗玻璃反光映照面孔 → 开始创建角色 [来源: 沉浸式交互让游戏更加迷人.md]/g' wiki/concepts/潜意识交互.md)",
+      "Bash(sed -i 's/- \\\\*\\\\*传统设计\\\\*\\\\*：CG后直接出现捏人界面//g' wiki/concepts/潜意识交互.md)",
+      "Bash(sed -i 's/- \\\\*\\\\*潜意识设计\\\\*\\\\*：环顾环境 → 镜头落入角色背后 → 车窗玻璃反光映照面孔 → 开始创建角色//g' wiki/concepts/潜意识交互.md)",
+      "Bash(xargs sed:*)",
+      "Bash(sed -i 's/## 适配应用/## 适配应用\\\\n结合 [[wiki\\\\/concepts\\\\/动态UI适配.md|动态UI适配]] 和 [[wiki\\\\/concepts\\\\/安全区域适配.md|安全区域适配]]：/g' wiki/concepts/UI锚点.md)",
+      "Bash(sed -i 's/## 常见适配问题及方案/## 常见适配问题及方案\\\\n这通常需要结合 [[wiki\\\\/concepts\\\\/动态UI适配.md|动态UI适配]] 和 [[wiki\\\\/concepts\\\\/UI锚点.md|UI锚点]] 一起解决：/g' wiki/concepts/安全区域适配.md)",
+      "Bash(sed -i 's/## 设计原理/## 设计原理\\\\n与 [[wiki\\\\/concepts\\\\/替代控制器.md|替代控制器]] 的物理交互类似：/g' wiki/concepts/拖拽交互.md)"
     ],
     "additionalDirectories": [
-      "c:\\Users\\hutingrong\\Desktop\\know"
+      "c:\\Users\\hutingrong\\Desktop\\know",
+      "c:\\Users\\hutingrong\\Desktop\\know\\raw\\articles"
     ]
   }
 }
