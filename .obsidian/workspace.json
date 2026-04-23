@@ -183,8 +183,11 @@
       "bases:新建数据库": false
     }
   },
-  "active": "da6e2d95404a75ba",
+  "active": "dec15171d6263cbe",
   "lastOpenFiles": [
+    "skills/05-hygiene_rules.md",
+    "skills/04-ingest_workflow.md",
+    "skills/00-metadata_schema.md",
     "scripts/fetchers/youtube_fetcher.py",
     "scripts/images/preprocess_images.py",
     "scripts/internal/lint.js",
@@ -195,7 +198,6 @@
     "scripts/fetchers/youtube.sh",
     "scripts/archive/fix_genshin_assets.py",
     "scripts/wiki.sh",
-    "scripts/images",
     "scripts/README.md",
     "rules.md",
     "wiki/games/游戏举例.md",
@@ -229,8 +231,6 @@
     "wiki/analysis/无期迷途-签到系统.md",
     "wiki/analysis/王者荣耀-签到系统.md",
     "raw/articles/Battle Passes Analysis.md",
-    "wiki/mechanics/战斗通行证系统.md",
-    "wiki/analysis/逆水寒-14日签到分析.md",
     "未命名.canvas",
     "未命名 1.canvas"
   ]
