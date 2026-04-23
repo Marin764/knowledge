@@ -1,118 +1,50 @@
-# YouTube 字幕批量处理工具
+# 知识库工具箱 (Scripts Library)
 
-抓取 YouTube 视频字幕，转换为 Markdown 格式，存入本地知识库。
-
-## 环境要求
-
-- Python 3.12+
-- `youtube-transcript-api`
-
-```bash
-# 安装依赖
-pip install youtube-transcript-api
-```
+本目录包含用于自动化处理、Wiki 维护和资产管理的各种脚本。
 
 ## 目录结构
 
-```
-know/
-├── youtu/
-│   └── 链接.txt          # 链接列表（每行一个链接）
-├── raw/
-│   └── youtube/          # 字幕输出目录
-└── scripts/
-    ├── youtube_batch.py  # 批量处理脚本（主脚本）
-    └── README.md         # 本文档
-```
-
-## 链接文件格式
-
-`youtu/链接.txt` 每行一个链接，支持格式：
-
-```txt
-https://www.youtube.com/watch?v=iIOIT3dCy5w
-https://www.youtube.com/watch?v=7L8vAGGitr8 视频标题（可选）
-https://youtu.be/P05ONfLOqmY
+```text
+scripts/
+├── wiki.sh           # [主入口] 知识库维护 CLI 工具
+├── images/           # 图片处理工具
+│   ├── preprocess_images.py  # 截图预处理 (去重/缩放)
+│   └── fix_genshin_assets.py # 原神 UI 资产确权修复脚本
+├── fetchers/         # 外部资料抓取
+│   ├── youtube_batch.py      # YouTube 字幕批量抓取 (主脚本)
+│   └── yt_dlp_fetch.py       # 基于 yt-dlp 的视频信息获取
+├── internal/         # 内部实现脚本 (供 wiki.sh 调用)
+│   ├── lint.js               # 知识库健康检查
+│   └── generate_slides.js    # Marp 幻灯片生成器
+└── README.md         # 本文档
 ```
 
-- 第一列：YouTube 链接（支持标准链接、youtu.be 短链接）
-- 第二列（可选）：视频标题（留空则自动用 Video ID）
-- 时间参数（`&t=xxx`）会被自动忽略
-
-## 使用方法
-
-```bash
-# 方式1: 直接运行
-python scripts/youtube_batch.py
-
-# 方式2: 使用完整路径
-"C:\Users\xxx\AppData\Local\Programs\Python\Python312\python.exe" scripts/youtube_batch.py
-```
-
-## 工作流程
-
-```
-链接文件 → 解析 Video ID → 请求字幕 → 格式转换 → 输出 Markdown
-```
-
-1. **URL 解析**：从链接中提取 11 位 Video ID
-2. **字幕获取**：优先中文字幕 → 英/日文翻译为中文 → 任意可用语言
-3. **格式转换**：VTT 原始数据 → 每分钟一个段落的 Markdown
-4. **写入文件**：保存到 `raw/youtube/视频标题.md`
-5. **标记状态**：在 `链接.txt` 对应行末尾追加 ` - [已处理]`
-
-## 输出格式
-
-生成的 Markdown 文件包含标准 Frontmatter：
-
-```yaml
----
-type: source
-title: "视频标题"
-url: "https://www.youtube.com/watch?v=xxx"
-date: 2026-04-17
-format: [video]
-status: processed
 ---
 
-# 视频标题
+## 常用命令 (Wiki Helper)
 
-[00:00] 欢迎大家来到今天的节目
-今天我们要讲的是游戏交互设计
+建议通过根目录或 `scripts/` 运行 `bash scripts/wiki.sh`：
 
-[01:05] 第一个核心原则是响应感
-玩家按下按键到画面反馈的时间窗口
-```
+| 命令 | 用途 |
+| :--- | :--- |
+| `wiki lint` | 检查死链、孤立页面和 Frontmatter 错误 |
+| `wiki stats` | 显示知识库当前规模统计 |
+| `wiki slides --all` | 为所有 `concepts/` 页面生成幻灯片 |
+| `wiki new concept <name>` | 使用标准模板创建新概念页面 |
 
-## 注意事项
+---
 
-- **IP 限制**：频繁请求可能导致 YouTube 临时封禁 IP，等待几十分钟后重试
-- **已处理跳过**：脚本会自动跳过标记为 `[已处理]` 的链接
-- **中文优先**：优先获取中文/翻译字幕，纯英文内容质量取决于 YouTube 自动翻译
-- **UTF-8 编码**：Windows 环境下强制 UTF-8 输出，避免中文乱码
+## 专项工具说明
 
-## 故障排除
+### 1. 图片处理 (images/)
+- **preprocess_images.py**: 在摄入大量截图前运行，执行感知哈希去重。
+- **fix_genshin_assets.py**: 针对原神项目的专项资产映射工具。
 
-### YouTube IP 封禁
+### 2. 字幕抓取 (fetchers/)
+详细说明请参考 `scripts/fetchers/` 内部的相关文档。主要逻辑：
+- 读取 `youtu/链接.txt`。
+- 自动抓取并翻译字幕为中文。
+- 生成 Markdown 存入 `raw/youtube/`。
 
-```
-ERROR: YouTube is blocking requests from your IP
-```
-
-等待 30-60 分钟后重试，或尝试使用 VPN 更换出口 IP。
-
-### 无字幕可用
-
-部分视频（多为用户生成内容）可能没有字幕，脚本会保留该链接不处理。
-
-### JavaScript 运行时警告（yt-dlp 模式）
-
-```
-No supported JavaScript runtime could be found
-```
-
-安装 Node.js 即可解决，不影响默认 API 模式。
-
-## 许可证
-
-MIT License
+---
+*Last updated: 2026-04-23*

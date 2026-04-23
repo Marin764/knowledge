@@ -1,7 +1,3 @@
----
-trigger: always_on
----
-
 # Game Design Wiki - Schema
 
 > 这是整个知识库的"宪法"，定义了 AI 维护者的行为规范和工作流。本知识库以**游戏设计**相关的知识为主，涵盖但不局限于游戏交互设计、关卡设计、系统设计、叙事设计等领域。
@@ -12,8 +8,11 @@ trigger: always_on
 know/                          # 根目录
 ├── CLAUDE.md                 # 本文件 - Schema 定义
 ├── scripts/                  # 工具脚本
-│   ├── lint.py               # 健康检查脚本（每次提交自动运行）
-│   ├── generate_slides.py    # Marp 幻灯片生成器
+│   ├── images/               # 图片处理 (去重/缩放)
+│   ├── fetchers/             # 外部抓取 (YouTube 等)
+│   ├── internal/             # 内部逻辑 (Lint/Slides)
+│   ├── archive/              # [新增] 归档脚本 (备份/环境重建)
+│   ├── README.md             # 工具箱说明索引
 │   └── wiki.sh               # 便捷命令入口
 ├── exports/                   # AI 生成的可交付物（幻灯片/图表）
 ├── wiki/
@@ -223,7 +222,7 @@ status: active
 **触发**：用户说 `analyze_ui <image>` 或 `分析UI <图片>`
 
 **基础流程**：
-1. **预处理**：运行 `python scripts/preprocess_images.py` 执行去重与缩放。
+1. **预处理**：运行 `python scripts/images/preprocess_images.py` 执行去重与缩放。
 2. **视觉逆向工程**：按照“层级、布局、交互、UX、组件抽象”五个维度输出。
 3. **枢纽架构 (Hub-and-Spoke)**：
     - **禁止过度堆砌**：核心游戏页面保留概况，具体的系统分析（如战令、商城）应剥离至 `wiki/analysis/` 目录。
@@ -302,13 +301,15 @@ Last updated: 2026-04-13 | Pages: X | Sources: X
 
 | 脚本 | 用途 | 调用方式 |
 |------|------|----------|
-| `scripts/lint.js` | 健康检查：死链接、孤立页面、Frontmatter校验 | `node scripts/lint.js` |
-| `scripts/generate_slides.js` | Marp幻灯片生成 | `node scripts/generate_slides.js --all` |
-| `scripts/youtube.sh` | 抓取 YouTube 字幕并转为 Markdown | `bash scripts/youtube.sh <url> [标题]` |
-| `scripts/wiki.sh` | 便捷命令入口 | `bash scripts/wiki.sh <command>` |
-| `scripts/preprocess_images.py` | 截图预处理：去重、缩放、压缩 | `python scripts/preprocess_images.py` |
+| `scripts/internal/lint.js` | 健康检查：死链接、孤立页面、FM 校验 | `node scripts/internal/lint.js` |
+| `scripts/internal/generate_slides.js` | Marp 幻灯片生成 | `node scripts/internal/generate_slides.js --all` |
+| `scripts/fetchers/youtube.sh` | 抓取 YouTube 字幕并转为 Markdown | `bash scripts/fetchers/youtube.sh <url> [标题]` |
+| `scripts/wiki.sh` | 便捷命令入口 (CLI) | `bash scripts/wiki.sh <command>` |
+| `scripts/images/preprocess_images.py` | 截图预处理：去重、缩放、压缩 | `python scripts/images/preprocess_images.py` |
 
-**Git Hooks**：`.git/hooks/pre-commit` 会在每次 `git commit` 时自动运行 `lint.py`，确保提交内容健康。
+**归档原则**：针对特定项目的一次性修复脚本或陈旧脚本存放在 `scripts/archive/`，不列入常用工具表，仅作为环境重建备份。
+
+**Git Hooks**：`.git/hooks/pre-commit` 会在每次 `git commit` 时自动运行 `lint.js`，确保提交内容健康。
 
 **搜索**：当 wiki 页面超过 100 个时，建议使用 qmd 搜索
 - **可视化**：需要时用 Mermaid 画概念关系图
@@ -323,7 +324,7 @@ Last updated: 2026-04-13 | Pages: X | Sources: X
 | 技能文件 | 触发场景 | 输出目标 |
 |------|------|------|
 | `skills/01-ui_analysis.md` | 用户提供游戏 UI 截图 | 五维度分析报告，录入 `wiki/analysis/` |
-| `skills/02-battle_pass_spec.md` | 用户要求生成战令交互规范 | 正式规范文档，保存至 `exports/` |
+| `skills/02-game_system_ux_spec.md` | 用户要求生成任意游戏系统交互规范（战令/商城/抽卡/公会等） | 正式规范文档，保存至 `exports/` |
 
 **调用规则**（强制）：
 - AI 在执行相关任务前，**必须完整读取对应 Skill 文件**，以 Skill 中的模块结构为输出骨架。
@@ -334,4 +335,4 @@ Last updated: 2026-04-13 | Pages: X | Sources: X
 
 ---
 
-*Schema version: 1.6 | Last updated: 2026-04-21*
+*Schema version: 1.7 | Last updated: 2026-04-23*

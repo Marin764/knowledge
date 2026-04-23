@@ -335,4 +335,4 @@ Last updated: 2026-04-13 | Pages: X | Sources: X
 
 ---
 
-*Schema version: 1.7 | Last updated: 2026-04-23*
+*Schema version: 1.6 | Last updated: 2026-04-21*

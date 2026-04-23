@@ -4,19 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "08d5c7236d1d98e1",
+        "id": "a9b6b18f45bc5c63",
         "type": "tabs",
         "children": [
           {
-            "id": "39abfc8375e058c1",
+            "id": "dec15171d6263cbe",
             "type": "leaf",
             "state": {
-              "type": "image",
+              "type": "markdown",
               "state": {
-                "file": "assets/genshin_ui/genshin-wish-result-single.jpg"
+                "file": "wiki/concepts/心血辩护效应.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-image",
-              "title": "genshin-wish-result-single"
+              "icon": "lucide-file",
+              "title": "心血辩护效应"
             }
           }
         ]
@@ -181,8 +183,25 @@
       "bases:新建数据库": false
     }
   },
-  "active": "39abfc8375e058c1",
+  "active": "da6e2d95404a75ba",
   "lastOpenFiles": [
+    "scripts/fetchers/youtube_fetcher.py",
+    "scripts/images/preprocess_images.py",
+    "scripts/internal/lint.js",
+    "scripts/fetchers/youtube_batch.py",
+    "scripts/internal/generate_slides.js",
+    "scripts/fetchers/yt_dlp_fetch.py",
+    "scripts/fetchers/youtube_batch.js",
+    "scripts/fetchers/youtube.sh",
+    "scripts/archive/fix_genshin_assets.py",
+    "scripts/wiki.sh",
+    "scripts/images",
+    "scripts/README.md",
+    "rules.md",
+    "wiki/games/游戏举例.md",
+    "wiki/games/皇室战争.md",
+    "wiki/games/荒野乱斗.md",
+    "assets/genshin_ui/genshin-wish-result-single.jpg",
     "assets/genshin_ui/genshin-wish-standard-banner.jpg",
     "assets/genshin_ui/genshin-char-panel-01.jpg",
     "assets/genshin_ui/genshin-char-glider.jpg",
@@ -192,8 +211,6 @@
     "assets/原神_UI/原神-系统-祈愿-结算十连.jpg",
     "assets/原神_UI/原神-系统-角色养成-天赋升级.jpg",
     "assets/原神_UI/原神-系统-祈愿-主界面.jpg",
-    "assets/原神_UI/原神-系统-任务列表-01.jpg",
-    "assets/原神_UI/原神-系统-商城-月卡.jpg",
     "wiki/analysis/原神-背包与资源管理.md",
     "wiki/analysis/原神-大地图系统.md",
     "wiki/analysis/原神-角色养成系统.md",
@@ -201,19 +218,10 @@
     "wiki/games/原神.md",
     "wiki/games/逆水寒.md",
     "wiki/concepts/交互设计.md",
-    "scripts/fix_genshin_assets.py",
     "raw/screenshots/原神/mapping_log.md",
     "wiki/analysis/星穹铁道-战令系统.md",
-    "assets/原神_UI",
-    "assets/genshin_ui",
     "wiki/analysis/星穹铁道-回归系统.md",
-    "raw/screenshots/原神/ready",
-    "raw/screenshots/原神",
     "skills/03-batch_image_ingest.md",
-    "raw/genshin/www.gameui.net/原神-GameUI.net",
-    "raw/genshin/www.gameui.net",
-    "raw/genshin",
-    "raw/新建文件夹",
     "exports/回归系统-交互设计规范_V1.md",
     "wiki/analysis/王者荣耀-战令系统.md",
     "exports/签到系统-交互设计规范_V1.md",
@@ -223,12 +231,6 @@
     "raw/articles/Battle Passes Analysis.md",
     "wiki/mechanics/战斗通行证系统.md",
     "wiki/analysis/逆水寒-14日签到分析.md",
-    "wiki/analysis/逆水寒-回归系统.md",
-    "wiki/analysis/逆水寒-战令系统.md",
-    "wiki/analysis/王者荣耀-回归系统.md",
-    "wiki/analysis/无期迷途-回归系统.md",
-    "exports/战令系统-交互设计规范_V3.md",
-    "raw/screenshots/ready",
     "未命名.canvas",
     "未命名 1.canvas"
   ]

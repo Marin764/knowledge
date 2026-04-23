@@ -37,7 +37,7 @@ show_help() {
 cmd_lint() {
     echo -e "${YELLOW}🔍 运行健康检查...${NC}"
     cd "$SCRIPT_DIR/.."
-    node scripts/lint.js
+    node scripts/internal/lint.js
 }
 
 cmd_stats() {
@@ -73,13 +73,13 @@ cmd_slides() {
     cd "$SCRIPT_DIR/.."
     if [ "$1" == "--all" ]; then
         echo -e "${YELLOW}🎴 为所有概念生成幻灯片...${NC}"
-        node scripts/generate_slides.js --all
+        node scripts/internal/generate_slides.js --all
     elif [ -n "$1" ]; then
         echo -e "${YELLOW}🎴 生成幻灯片: $1${NC}"
-        node scripts/generate_slides.js -f "$1"
+        node scripts/internal/generate_slides.js -f "$1"
     else
         echo -e "${YELLOW}🎴 生成幻灯片 (默认全部)...${NC}"
-        node scripts/generate_slides.js --all
+        node scripts/internal/generate_slides.js --all
     fi
     echo -e "${GREEN}✅ 幻灯片已生成到 exports/ 目录${NC}"
 }
