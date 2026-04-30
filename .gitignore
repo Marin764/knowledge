@@ -1,9 +1,10 @@
 # Game Design Wiki - Ignore List
 
-# 屏蔽原始素材目录 (User Request)
+# Raw and standardized visual assets stay local.
 raw/
+assets/
 
-# 屏蔽临时与环境文件
+# Temporary and environment files.
 .gemini/
 .DS_Store
 node_modules/
@@ -11,7 +12,8 @@ dist/
 *.log
 tmp/
 scripts/__pycache__/
+**/__pycache__/
 
-# 屏蔽本地凭证与配置
+# Local credentials and config.
 .env
 local_config.json

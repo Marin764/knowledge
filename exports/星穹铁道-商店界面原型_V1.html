@@ -1,0 +1,1853 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>星穹铁道-商店界面原型 V1</title>
+  <style>
+    :root {
+      --bg-deep: #08111f;
+      --bg-mid: #10243d;
+      --bg-soft: #18375a;
+      --panel-fill: rgba(8, 15, 30, 0.72);
+      --panel-edge: rgba(231, 212, 164, 0.26);
+      --card-fill: rgba(14, 26, 44, 0.82);
+      --text-main: #f8f3e6;
+      --text-sub: rgba(243, 238, 225, 0.78);
+      --text-dim: rgba(222, 214, 197, 0.58);
+      --accent: #e0b76c;
+      --accent-strong: #f2d287;
+      --accent-cool: #8ac8ff;
+      --shadow: rgba(1, 6, 16, 0.58);
+      --title-font: "STZhongsong", "Songti SC", "SimSun", serif;
+      --body-font: "Microsoft YaHei UI", "PingFang SC", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 18% 20%, rgba(79, 132, 190, 0.22), transparent 34%),
+        radial-gradient(circle at 82% 16%, rgba(240, 200, 124, 0.18), transparent 28%),
+        linear-gradient(180deg, #07111d 0%, #091522 38%, #050a13 100%);
+      color: var(--text-main);
+      font: 14px/1.5 var(--body-font);
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: -8%;
+      pointer-events: none;
+      background-size: cover;
+      background-position: center;
+      opacity: 0.24;
+      filter: blur(18px) saturate(1.08);
+      transform: scale(1.08);
+    }
+
+    body::before {
+      background-image:
+        linear-gradient(120deg, rgba(3, 9, 18, 0.76), rgba(3, 9, 18, 0.22)),
+        url("../assets/star_rail_ui/hsr-shop-main.jpg");
+    }
+
+    body::after {
+      background-image:
+        linear-gradient(300deg, rgba(4, 9, 16, 0.78), rgba(4, 9, 16, 0.18)),
+        url("../assets/star_rail_ui/hsr-shop-world.jpg");
+      transform: scale(1.08) rotate(1deg);
+    }
+
+    button {
+      appearance: none;
+      -webkit-appearance: none;
+      border: 0;
+      padding: 0;
+      color: inherit;
+      background: none;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .shop-stage {
+      width: min(calc(100vw - 34px), calc((100vh - 34px) * 16 / 9));
+      aspect-ratio: 16 / 9;
+      position: relative;
+      overflow: hidden;
+      border-radius: 34px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow:
+        0 40px 90px var(--shadow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
+      background:
+        linear-gradient(135deg, rgba(8, 17, 31, 0.9), rgba(9, 21, 38, 0.84)),
+        linear-gradient(180deg, rgba(19, 37, 62, 0.36), rgba(10, 18, 34, 0.08));
+    }
+
+    .shop-stage::before {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border-radius: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      pointer-events: none;
+    }
+
+    .shop-stage::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.85));
+      opacity: 0.42;
+    }
+
+    .shop-shell {
+      position: absolute;
+      inset: 18px;
+      display: grid;
+      grid-template-rows: 86px minmax(0, 1fr) 78px;
+      gap: 14px;
+    }
+
+    .topbar,
+    .nav-rail,
+    .hero-panel,
+    .reward-rail,
+    .offer-strip,
+    .bottom-bar {
+      position: relative;
+      overflow: hidden;
+      border-radius: 24px;
+      border: 1px solid var(--panel-edge);
+      background: var(--panel-fill);
+      backdrop-filter: blur(12px);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 280px 1fr 390px;
+      gap: 14px;
+      padding: 14px 18px;
+      align-items: center;
+    }
+
+    .mode-block {
+      display: grid;
+      gap: 6px;
+      align-content: center;
+    }
+
+    .mode-tag {
+      width: fit-content;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: linear-gradient(90deg, rgba(224, 183, 108, 0.18), rgba(138, 200, 255, 0.1));
+      color: var(--accent-strong);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .mode-title {
+      font: 700 24px/1.1 var(--title-font);
+      letter-spacing: 0.08em;
+    }
+
+    .mode-copy {
+      color: var(--text-dim);
+      font-size: 12px;
+    }
+
+    .title-wrap {
+      position: relative;
+      display: grid;
+      place-items: center;
+      height: 100%;
+    }
+
+    .title-wrap img {
+      width: 340px;
+      max-width: 100%;
+      opacity: 0.72;
+      filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.28));
+    }
+
+    .title-copy {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font: 700 22px/1.1 var(--title-font);
+      letter-spacing: 0.24em;
+      text-shadow: 0 4px 18px rgba(0, 0, 0, 0.46);
+    }
+
+    .top-actions {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .currency-chip {
+      position: relative;
+      width: 172px;
+      height: 54px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(10, 18, 30, 0.56);
+    }
+
+    .currency-chip img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.38;
+      filter: saturate(1.1);
+    }
+
+    .currency-chip::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(8, 16, 28, 0.22), rgba(8, 16, 28, 0.72));
+    }
+
+    .currency-copy {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 0 16px;
+      font-weight: 700;
+    }
+
+    .currency-copy span {
+      color: var(--text-sub);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .currency-copy strong {
+      font-size: 16px;
+      letter-spacing: 0.04em;
+    }
+
+    .close-button {
+      width: 56px;
+      height: 56px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(9, 17, 30, 0.68);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: transform 180ms ease, border-color 180ms ease;
+    }
+
+    .close-button:hover,
+    .close-button:focus-visible {
+      outline: none;
+      transform: translateY(-1px) scale(1.01);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .close-button img {
+      width: 78px;
+      opacity: 0.78;
+    }
+
+    .main-layout {
+      display: grid;
+      grid-template-columns: 214px minmax(0, 1fr) 354px;
+      gap: 14px;
+      min-height: 0;
+    }
+
+    .nav-rail {
+      padding: 16px 14px;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 12px;
+    }
+
+    .rail-head {
+      display: grid;
+      gap: 6px;
+    }
+
+    .rail-head strong {
+      font: 700 18px/1.15 var(--title-font);
+      letter-spacing: 0.08em;
+    }
+
+    .rail-head span {
+      color: var(--text-dim);
+      font-size: 12px;
+    }
+
+    .nav-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .nav-tab {
+      position: relative;
+      width: 100%;
+      height: 68px;
+      overflow: hidden;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(9, 18, 32, 0.58);
+      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    }
+
+    .nav-tab img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.78;
+      filter: saturate(1.02);
+    }
+
+    .nav-tab::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(4, 8, 14, 0.12), rgba(4, 8, 14, 0.54));
+      transition: opacity 180ms ease;
+    }
+
+    .nav-tab.active {
+      transform: translateX(6px);
+      border-color: rgba(229, 184, 108, 0.58);
+      box-shadow: 0 10px 24px rgba(224, 183, 108, 0.18);
+    }
+
+    .nav-tab.active::after {
+      opacity: 0.08;
+    }
+
+    .nav-tab:hover,
+    .nav-tab:focus-visible {
+      outline: none;
+      transform: translateX(4px);
+      border-color: rgba(255, 255, 255, 0.16);
+    }
+
+    .rail-tip {
+      padding: 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background:
+        linear-gradient(160deg, rgba(24, 48, 80, 0.48), rgba(12, 18, 28, 0.64)),
+        rgba(8, 14, 26, 0.78);
+      display: grid;
+      gap: 10px;
+      align-content: end;
+    }
+
+    .rail-tip img {
+      width: 100%;
+      border-radius: 16px;
+      opacity: 0.88;
+    }
+
+    .rail-tip strong {
+      font-size: 14px;
+      letter-spacing: 0.04em;
+    }
+
+    .rail-tip span {
+      color: var(--text-dim);
+      font-size: 12px;
+    }
+
+    .center-stack {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) 182px;
+      gap: 14px;
+    }
+
+    .panel-skin {
+      position: absolute;
+      inset: 0;
+      opacity: 0.28;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    .panel-skin.main {
+      background-image: url("../assets/star_rail_controls/crops/panel/hsr-shop-main-product-panel.png");
+    }
+
+    .panel-skin.reward {
+      background-image: url("../assets/star_rail_controls/crops/panel/hsr-shop-world-reward-panel.png");
+      background-size: 110% 100%;
+    }
+
+    .hero-panel {
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 1.04fr 0.92fr;
+      gap: 16px;
+      min-height: 0;
+    }
+
+    .hero-visual {
+      position: relative;
+      overflow: hidden;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: linear-gradient(145deg, rgba(13, 26, 43, 0.92), rgba(9, 17, 30, 0.84));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    }
+
+    .hero-visual::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 28% 22%, rgba(255, 255, 255, 0.15), transparent 34%),
+        linear-gradient(180deg, rgba(4, 8, 16, 0.05), rgba(4, 8, 16, 0.58));
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .hero-image,
+    .hero-image-secondary {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transition: opacity 260ms ease, transform 320ms ease;
+    }
+
+    .hero-image {
+      opacity: 0.74;
+      filter: saturate(1.04);
+    }
+
+    .hero-image-secondary {
+      opacity: 0.22;
+      transform: scale(1.08) translateX(6%);
+      mix-blend-mode: screen;
+      filter: blur(1px);
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 4;
+      height: 100%;
+      display: grid;
+      align-content: end;
+      gap: 10px;
+      padding: 24px 24px 22px;
+      background: linear-gradient(180deg, rgba(8, 13, 22, 0.04), rgba(8, 13, 22, 0.76));
+    }
+
+    .badge-wrap {
+      width: fit-content;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding-right: 12px;
+      border-radius: 999px;
+      background: rgba(9, 17, 29, 0.56);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .badge-wrap img {
+      width: 104px;
+      height: 42px;
+      object-fit: cover;
+      opacity: 0.92;
+    }
+
+    .badge-wrap span {
+      color: var(--accent-strong);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+    }
+
+    .hero-kicker {
+      color: var(--accent-cool);
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .hero-title {
+      margin: 0;
+      font: 700 34px/1.12 var(--title-font);
+      letter-spacing: 0.08em;
+      text-shadow: 0 8px 32px rgba(0, 0, 0, 0.38);
+    }
+
+    .hero-desc {
+      margin: 0;
+      max-width: 420px;
+      color: var(--text-sub);
+      font-size: 14px;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .meta-chip {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(6, 12, 22, 0.48);
+      color: var(--text-dim);
+      font-size: 12px;
+    }
+
+    .offer-detail {
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto auto auto 1fr auto;
+      gap: 14px;
+    }
+
+    .section-head {
+      display: grid;
+      gap: 6px;
+    }
+
+    .section-head strong {
+      font: 700 18px/1.15 var(--title-font);
+      letter-spacing: 0.08em;
+    }
+
+    .section-head span {
+      color: var(--text-dim);
+      font-size: 12px;
+    }
+
+    .benefit-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .benefit-row {
+      position: relative;
+      min-height: 76px;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: var(--card-fill);
+    }
+
+    .benefit-row img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.26;
+    }
+
+    .benefit-row::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(9, 16, 28, 0.84), rgba(9, 16, 28, 0.42));
+    }
+
+    .benefit-copy {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 4px;
+      padding: 14px 16px;
+    }
+
+    .benefit-copy strong {
+      font-size: 14px;
+    }
+
+    .benefit-copy span {
+      color: var(--text-dim);
+      font-size: 12px;
+    }
+
+    .price-action {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 222px;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .price-box {
+      position: relative;
+      min-height: 118px;
+      overflow: hidden;
+      border-radius: 22px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(8, 15, 28, 0.78);
+    }
+
+    .price-box img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.28;
+    }
+
+    .price-box::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(18, 36, 58, 0.56), rgba(8, 15, 26, 0.78));
+    }
+
+    .price-copy {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      display: grid;
+      align-content: center;
+      gap: 6px;
+      padding: 18px 20px;
+    }
+
+    .price-label {
+      color: var(--text-dim);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .price-main {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      font-family: var(--title-font);
+    }
+
+    .price-main strong {
+      font-size: 34px;
+      letter-spacing: 0.04em;
+    }
+
+    .price-main span {
+      color: var(--accent-strong);
+      font-size: 15px;
+    }
+
+    .price-sub {
+      color: var(--text-sub);
+      font-size: 12px;
+    }
+
+    .price-strike {
+      color: rgba(210, 190, 160, 0.64);
+      text-decoration: line-through;
+    }
+
+    .action-stack {
+      display: grid;
+      gap: 10px;
+      justify-items: stretch;
+    }
+
+    .image-action {
+      position: relative;
+      height: 88px;
+      overflow: hidden;
+      border-radius: 18px;
+      transition: transform 180ms ease, filter 180ms ease;
+    }
+
+    .image-action:hover,
+    .image-action:focus-visible {
+      outline: none;
+      transform: translateY(-2px);
+      filter: brightness(1.04);
+    }
+
+    .image-action img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.28));
+    }
+
+    .action-note {
+      padding: 10px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(10, 18, 32, 0.72);
+      color: var(--text-dim);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .offer-strip {
+      padding: 16px;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 12px;
+      min-height: 0;
+    }
+
+    .offer-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .offer-card {
+      position: relative;
+      min-height: 104px;
+      padding: 14px 14px 12px;
+      overflow: hidden;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(10, 18, 30, 0.74);
+      text-align: left;
+      transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+    }
+
+    .offer-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
+        url("../assets/star_rail_controls/crops/item_cell/hsr-shop-world-item-selected.png") center/cover;
+      opacity: 0.28;
+    }
+
+    .offer-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(8, 16, 28, 0.16), rgba(8, 16, 28, 0.72));
+    }
+
+    .offer-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .offer-card.active {
+      border-color: rgba(229, 184, 108, 0.54);
+      box-shadow: 0 14px 28px rgba(224, 183, 108, 0.16);
+      transform: translateY(-2px);
+    }
+
+    .offer-card:hover,
+    .offer-card:focus-visible {
+      outline: none;
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+
+    .offer-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .offer-top strong {
+      font-size: 15px;
+    }
+
+    .offer-state {
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(224, 183, 108, 0.18);
+      color: var(--accent-strong);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .offer-card span,
+    .offer-card em {
+      display: block;
+      color: var(--text-dim);
+      font-size: 12px;
+      font-style: normal;
+    }
+
+    .offer-price {
+      margin-top: 10px;
+      color: var(--text-sub);
+      font-size: 12px;
+    }
+
+    .reward-rail {
+      padding: 18px 16px;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 14px;
+      min-height: 0;
+    }
+
+    .reward-head {
+      display: grid;
+      gap: 6px;
+    }
+
+    .reward-head strong {
+      font: 700 20px/1.15 var(--title-font);
+      letter-spacing: 0.08em;
+    }
+
+    .reward-head span {
+      color: var(--text-dim);
+      font-size: 12px;
+    }
+
+    .rail-summary {
+      padding: 12px 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(10, 18, 30, 0.78);
+      display: grid;
+      gap: 4px;
+    }
+
+    .rail-summary strong {
+      color: var(--accent-strong);
+      font-size: 14px;
+    }
+
+    .rail-summary span {
+      color: var(--text-dim);
+      font-size: 12px;
+    }
+
+    .reward-list {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+      min-height: 0;
+    }
+
+    .reward-item {
+      padding: 12px 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(10, 18, 30, 0.78);
+      display: grid;
+      gap: 6px;
+    }
+
+    .reward-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .reward-title strong {
+      font-size: 14px;
+    }
+
+    .reward-tag {
+      color: var(--accent-cool);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .reward-item span {
+      color: var(--text-dim);
+      font-size: 12px;
+    }
+
+    .reward-actions {
+      display: grid;
+      gap: 10px;
+    }
+
+    .ghost-button {
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-sub);
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+    }
+
+    .ghost-button:hover,
+    .ghost-button:focus-visible {
+      outline: none;
+      transform: translateY(-1px);
+      border-color: rgba(229, 184, 108, 0.42);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .bottom-bar {
+      padding: 14px 18px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .bottom-copy {
+      display: grid;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .bottom-copy strong {
+      font-size: 14px;
+      letter-spacing: 0.04em;
+    }
+
+    .bottom-copy span {
+      color: var(--text-dim);
+      font-size: 12px;
+    }
+
+    .bottom-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .toast {
+      position: absolute;
+      left: 50%;
+      bottom: 104px;
+      transform: translate(-50%, 16px);
+      min-width: 240px;
+      max-width: 520px;
+      padding: 12px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(8, 16, 28, 0.92);
+      color: var(--text-sub);
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 180ms ease, transform 180ms ease;
+      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.28);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .content-fade {
+      animation: content-rise 280ms ease;
+    }
+
+    @keyframes content-rise {
+      from {
+        opacity: 0.55;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 1180px) {
+      .topbar {
+        grid-template-columns: 240px 1fr 320px;
+      }
+
+      .main-layout {
+        grid-template-columns: 188px minmax(0, 1fr) 308px;
+      }
+
+      .hero-panel {
+        grid-template-columns: 1fr 0.9fr;
+      }
+
+      .offer-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shop-stage">
+    <div class="shop-shell">
+      <header class="topbar">
+        <div class="mode-block">
+          <div class="mode-tag">Astral Boutique</div>
+          <div class="mode-title">列车补给站</div>
+          <div class="mode-copy" id="mode-copy">推荐页聚焦限时礼包、首购回报与每日补给。</div>
+        </div>
+
+        <div class="title-wrap">
+          <img src="../assets/star_rail_controls/crops/title_bar/hsr-shop-main-title-bar.png" alt="商店标题框">
+          <div class="title-copy" id="page-title">本期推荐</div>
+        </div>
+
+        <div class="top-actions">
+          <div class="currency-chip">
+            <img src="../assets/star_rail_controls/crops/currency_chip/hsr-shop-main-currency-premium.png" alt="高级货币条">
+            <div class="currency-copy">
+              <span>星琼</span>
+              <strong id="premium-count">12,840</strong>
+            </div>
+          </div>
+          <div class="currency-chip">
+            <img src="../assets/star_rail_controls/crops/currency_chip/hsr-shop-main-currency-crystal.png" alt="结晶货币条">
+            <div class="currency-copy">
+              <span>古代引擎</span>
+              <strong id="crystal-count">1,260</strong>
+            </div>
+          </div>
+          <button class="close-button" id="close-prototype" aria-label="关闭原型">
+            <img src="../assets/star_rail_controls/crops/icon_button/hsr-shop-main-btn-close.png" alt="">
+          </button>
+        </div>
+      </header>
+
+      <div class="main-layout">
+        <aside class="nav-rail">
+          <div class="rail-head">
+            <strong>商店分类</strong>
+            <span>沿用星铁商店主界面的左侧纵向页签结构。</span>
+          </div>
+
+          <div class="nav-list">
+            <button class="nav-tab active" data-category="recommend" aria-label="推荐">
+              <img src="../assets/star_rail_controls/crops/tab/hsr-shop-main-nav-recommend.png" alt="">
+            </button>
+            <button class="nav-tab" data-category="star-exchange" aria-label="星芒兑换">
+              <img src="../assets/star_rail_controls/crops/tab/hsr-shop-main-nav-star-exchange.png" alt="">
+            </button>
+            <button class="nav-tab" data-category="ember-exchange" aria-label="余烬兑换">
+              <img src="../assets/star_rail_controls/crops/tab/hsr-shop-main-nav-ember-exchange.png" alt="">
+            </button>
+            <button class="nav-tab" data-category="contract-store" aria-label="合约专卖">
+              <img src="../assets/star_rail_controls/crops/tab/hsr-shop-main-nav-contract-store.png" alt="">
+            </button>
+            <button class="nav-tab" data-category="dream-capture" aria-label="捕梦网">
+              <img src="../assets/star_rail_controls/crops/tab/hsr-shop-main-nav-dream-capture.png" alt="">
+            </button>
+            <button class="nav-tab" data-category="crystal-purchase" aria-label="结晶购入">
+              <img src="../assets/star_rail_controls/crops/tab/hsr-shop-main-nav-crystal-purchase.png" alt="">
+            </button>
+          </div>
+
+          <div></div>
+
+          <div class="rail-tip">
+            <img src="../assets/star_rail_controls/crops/menu_tile/hsr-hub-phone-menu-entry-store.png" alt="商店入口">
+            <strong>入口语义保留</strong>
+            <span>底部保留来自手机菜单的“商店”图块，强调这是游戏内系统菜单而不是商城网页。</span>
+          </div>
+        </aside>
+
+        <section class="center-stack">
+          <section class="hero-panel content-fade" id="hero-panel">
+            <div class="panel-skin main"></div>
+
+            <div class="hero-visual">
+              <div class="hero-image" id="hero-image"></div>
+              <div class="hero-image-secondary" id="hero-image-secondary"></div>
+              <div class="hero-copy">
+                <div class="badge-wrap">
+                  <img src="../assets/star_rail_controls/crops/badge/hsr-shop-main-rule-pill.png" alt="规则徽标">
+                  <span id="badge-copy">限时上架</span>
+                </div>
+                <div class="hero-kicker" id="hero-kicker">限定补给</div>
+                <h1 class="hero-title" id="hero-title">开拓者补给礼盒</h1>
+                <p class="hero-desc" id="hero-desc">以真实商店面板、价格框与奖励列为骨架，生成一个更适合游戏内停留与决策的礼包页焦点区域。</p>
+                <div class="hero-meta" id="hero-meta"></div>
+              </div>
+            </div>
+
+            <div class="offer-detail">
+              <div class="section-head">
+                <strong id="detail-title">商品说明</strong>
+                <span id="detail-copy">礼包内容与价值点在右侧统一展示，不打散成网页式卡片瀑布。</span>
+              </div>
+
+              <div class="benefit-list" id="benefit-list"></div>
+
+              <div class="price-action">
+                <div class="price-box">
+                  <img src="../assets/star_rail_controls/crops/price_panel/hsr-shop-main-price-display.png" alt="价格面板">
+                  <div class="price-copy">
+                    <div class="price-label" id="price-label">限定售价</div>
+                    <div class="price-main">
+                      <span id="price-unit">￥</span>
+                      <strong id="price-value">68</strong>
+                    </div>
+                    <div class="price-sub">
+                      <span class="price-strike" id="price-strike">原价 ￥98</span>
+                      <span id="price-note">首购阶段额外返还等价星琼。</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="action-stack">
+                  <button class="image-action" id="primary-action" aria-label="执行当前购买动作">
+                    <img id="primary-action-skin" src="../assets/star_rail_controls/crops/button/hsr-shop-main-btn-buy.png" alt="">
+                  </button>
+                  <div class="action-note" id="action-note">执行动作：购买当前精选商品。</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="offer-strip">
+            <div class="section-head">
+              <strong>同页可切换商品</strong>
+              <span>下方三个商品格继承世界商店商品卡的单元感，点击后只更新主舞台，不切出当前分类。</span>
+            </div>
+            <div class="offer-grid" id="offer-grid"></div>
+          </section>
+        </section>
+
+        <aside class="reward-rail">
+          <div class="panel-skin reward"></div>
+
+          <div class="reward-head">
+            <strong id="reward-title">附加赠礼</strong>
+            <span id="reward-copy">右侧承接世界商店奖励面板的结构语法，用来放“顺手可领”的附赠收益。</span>
+          </div>
+
+          <div class="rail-summary">
+            <strong id="rail-summary-title">今日顺手收益</strong>
+            <span id="rail-summary-copy">购买后立即到账，避免让收益说明埋在二级详情页。</span>
+          </div>
+
+          <div class="reward-list" id="reward-list"></div>
+
+          <div class="reward-actions">
+            <button class="ghost-button" id="preview-button">预览本档附赠内容</button>
+            <button class="ghost-button" id="secondary-button">查看规则与刷新时间</button>
+          </div>
+        </aside>
+      </div>
+
+      <footer class="bottom-bar">
+        <div class="bottom-copy">
+          <strong id="bottom-title">页面策略</strong>
+          <span id="bottom-copy">固定 16:9 舞台、左侧页签、中央大商品、右侧赠礼栏，避免把商店拆成网站式长列表。</span>
+        </div>
+
+        <div class="bottom-actions">
+          <button class="ghost-button" id="wish-button">加入心愿单</button>
+          <button class="ghost-button" id="switch-button">切换到下一分类</button>
+        </div>
+      </footer>
+    </div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <script>
+    const assetMap = {
+      benefitBuy: "../assets/star_rail_controls/crops/list_item/hsr-shop-main-benefit-row-buy.png",
+      benefitDaily: "../assets/star_rail_controls/crops/list_item/hsr-shop-main-benefit-row-daily.png",
+      buttonBuy: "../assets/star_rail_controls/crops/button/hsr-shop-main-btn-buy.png",
+      buttonClaim: "../assets/star_rail_controls/crops/button/hsr-shop-world-btn-claim.png"
+    };
+
+    const shopData = {
+      recommend: {
+        pageTitle: "本期推荐",
+        modeCopy: "推荐页聚焦限时礼包、首购回报与每日补给。",
+        badge: "限时上架",
+        kicker: "限定补给",
+        detailTitle: "商品说明",
+        detailCopy: "礼包内容与价值点在右侧统一展示，不打散成网页式卡片瀑布。",
+        rewardTitle: "附加赠礼",
+        rewardCopy: "右侧承接世界商店奖励面板的结构语法，用来放“顺手可领”的附赠收益。",
+        railSummaryTitle: "今日顺手收益",
+        railSummaryCopy: "购买后立即到账，避免让收益说明埋在二级详情页。",
+        bottomTitle: "页面策略",
+        bottomCopy: "固定 16:9 舞台、左侧页签、中央大商品、右侧赠礼栏，避免把商店拆成网站式长列表。",
+        actionSkin: "buttonBuy",
+        actionNote: "执行动作：购买当前精选商品。",
+        priceLabel: "限定售价",
+        heroImage: "../assets/star_rail_ui/hsr-shop-main.jpg",
+        heroImageSecondary: "../assets/star_rail_ui/hsr-shop-world.jpg",
+        premiumCount: "12,840",
+        crystalCount: "1,260",
+        meta: ["首购双倍", "剩余 18 小时", "账号限购 1 次"],
+        benefits: [
+          {
+            title: "购买即得开拓通票与燃料补给",
+            desc: "先用真实商店的“购买收益条”做第一屏价值锚点。",
+            skin: "benefitBuy"
+          },
+          {
+            title: "每日补给额外发放 7 天",
+            desc: "借用“每日收益条”语义，强调持续回报而不是单次花费。",
+            skin: "benefitDaily"
+          }
+        ],
+        rewards: [
+          {
+            title: "首购返还 680 星琼",
+            tag: "instant",
+            desc: "将最直接的价值回报放在右栏第一位。"
+          },
+          {
+            title: "七日补给任务加速包",
+            tag: "7 days",
+            desc: "每日领取额外信用点与角色经验素材。"
+          },
+          {
+            title: "搭配奖励：遗器强化组件",
+            tag: "bonus",
+            desc: "和主礼包形成“立刻能用”的闭环。"
+          }
+        ],
+        offers: [
+          {
+            name: "开拓者补给礼盒",
+            status: "热卖",
+            summary: "一次性高价值补给",
+            desc: "星琼 *680、燃料 *2、遗失碎金 *20 与追忆材料包。",
+            price: "68",
+            unit: "￥",
+            strike: "原价 ￥98",
+            note: "首购阶段额外返还等价星琼。"
+          },
+          {
+            name: "月度航行补给",
+            status: "长效",
+            summary: "低门槛持续收益",
+            desc: "立即获取 300 星琼，并在后续 30 天持续发放补给。",
+            price: "30",
+            unit: "￥",
+            strike: "原价 ￥45",
+            note: "更适合偏留存型玩家。"
+          },
+          {
+            name: "遗器养成推进包",
+            status: "养成",
+            summary: "直指角色强化缺口",
+            desc: "补足遗器经验、信用点与随机副词条洗练材料。",
+            price: "48",
+            unit: "￥",
+            strike: "原价 ￥66",
+            note: "强化内容和近期角色池活动联动。"
+          }
+        ]
+      },
+      "star-exchange": {
+        pageTitle: "星芒兑换",
+        modeCopy: "星芒页更强调稀缺兑换、角色养成与周期刷新。",
+        badge: "每月刷新",
+        kicker: "高稀有兑换",
+        detailTitle: "兑换重点",
+        detailCopy: "主舞台不展示冗长商城文案，而是聚焦“本月最值得换什么”。",
+        rewardTitle: "刷新路线",
+        rewardCopy: "用右栏告诉玩家哪些资源应该先换、哪些可以等下轮。",
+        railSummaryTitle: "本月优先序",
+        railSummaryCopy: "把决策成本压缩成一眼可读的三档优先级。",
+        bottomTitle: "兑换语义",
+        bottomCopy: "同样是商店页，但从“付费购买”切换成“稀缺代币分配”的页面心理。",
+        actionSkin: "buttonClaim",
+        actionNote: "执行动作：兑换当前优先商品。",
+        priceLabel: "所需星芒",
+        heroImage: "../assets/star_rail_ui/hsr-shop-world.jpg",
+        heroImageSecondary: "../assets/star_rail_ui/hsr-shop-main.jpg",
+        premiumCount: "1,480",
+        crystalCount: "320",
+        meta: ["月度刷新", "角色优先", "兑换额度有限"],
+        benefits: [
+          {
+            title: "优先锁定稀有票券与五星锥体",
+            desc: "利用主说明位直接告诉玩家“先换什么”，减少翻表比价。",
+            skin: "benefitBuy"
+          },
+          {
+            title: "次级资源放到每日或周常兜底",
+            desc: "把不值得抢兑的部分明确降权，避免页面主次失衡。",
+            skin: "benefitDaily"
+          }
+        ],
+        rewards: [
+          {
+            title: "本月票券建议优先换满",
+            tag: "top 1",
+            desc: "限量资源最适合放在右栏第一层提醒。"
+          },
+          {
+            title: "角色碎片仅在缺最后一阶时补",
+            tag: "top 2",
+            desc: "把“何时值得出手”写在页面里。"
+          },
+          {
+            title: "材料包作为溢出兜底",
+            tag: "top 3",
+            desc: "用于消化多余星芒，避免主界面失焦。"
+          }
+        ],
+        offers: [
+          {
+            name: "星轨专票",
+            status: "优先",
+            summary: "每月刷新一次",
+            desc: "最稳定也最直觉的星芒消耗点，适合占据主焦点。",
+            price: "20",
+            unit: "枚",
+            strike: "月限 5 张",
+            note: "兑换后可直接接续当前跃迁节奏。"
+          },
+          {
+            name: "常驻通票",
+            status: "次优",
+            summary: "补足常驻池节奏",
+            desc: "更偏长期累积，适合作为第二层推荐。",
+            price: "20",
+            unit: "枚",
+            strike: "月限 5 张",
+            note: "对追求常驻保底的玩家更友好。"
+          },
+          {
+            name: "角色突破组件",
+            status: "兜底",
+            summary: "仅在缺口明确时兑换",
+            desc: "材料包的存在感应该有，但不该压过核心票券。",
+            price: "48",
+            unit: "枚",
+            strike: "月限 2 组",
+            note: "作为票券换完后的次级出口。"
+          }
+        ]
+      },
+      "ember-exchange": {
+        pageTitle: "余烬兑换",
+        modeCopy: "余烬页更像高频补给站，强调日常可得与平价策略。",
+        badge: "高频补给",
+        kicker: "日常兑换",
+        detailTitle: "平价补给",
+        detailCopy: "从“昂贵精选”切换到“稳定养成”，但依然保持同一套商店舞台结构。",
+        rewardTitle: "平民优先级",
+        rewardCopy: "右栏继续承担“值不值得换”的快速判断，而非堆满品类。",
+        railSummaryTitle: "本周推荐",
+        railSummaryCopy: "优先拿票、再拿经验、最后拿信用点补差。",
+        bottomTitle: "页面节奏",
+        bottomCopy: "即便是低价资源页，也不做表格化清单，而是保持游戏内商店的舞台层级。",
+        actionSkin: "buttonClaim",
+        actionNote: "执行动作：领取或兑换当前日常补给。",
+        priceLabel: "所需余烬",
+        heroImage: "../assets/star_rail_ui/hsr-shop-main.jpg",
+        heroImageSecondary: "../assets/star_rail_ui/hsr-shop-world.jpg",
+        premiumCount: "6,580",
+        crystalCount: "4,260",
+        meta: ["周度循环", "平价补给", "高频刷新"],
+        benefits: [
+          {
+            title: "把票券与经验包并列成第一屏收益",
+            desc: "让玩家直接看到“今天换了就能推进什么”。",
+            skin: "benefitBuy"
+          },
+          {
+            title: "低价资源保持轻决策，不挤占主标题区",
+            desc: "减少网页商城常见的价格噪音与货架密度。",
+            skin: "benefitDaily"
+          }
+        ],
+        rewards: [
+          {
+            title: "每周固定换满通票",
+            tag: "fixed",
+            desc: "形成规律动作，是余烬页的核心心智。"
+          },
+          {
+            title: "经验书用于追角色等级",
+            tag: "growth",
+            desc: "适合放在第二层，以突出养成回报。"
+          },
+          {
+            title: "信用点仅用于缺口填平",
+            tag: "backup",
+            desc: "用较低权重避免玩家误判优先级。"
+          }
+        ],
+        offers: [
+          {
+            name: "开拓通票补给",
+            status: "常驻",
+            summary: "最稳的余烬出口",
+            desc: "让玩家在高频兑换页也能一眼看到最优选择。",
+            price: "90",
+            unit: "余烬",
+            strike: "周限 5 次",
+            note: "票券应占据第一推荐位。"
+          },
+          {
+            name: "角色经验包",
+            status: "养成",
+            summary: "和升级节奏直接绑定",
+            desc: "适合在票券之后作为第二兑换层。",
+            price: "45",
+            unit: "余烬",
+            strike: "周限 8 次",
+            note: "给刚抽到新角色的玩家更直观的用途。"
+          },
+          {
+            name: "信用点周补给",
+            status: "兜底",
+            summary: "用来补最后的养成缺口",
+            desc: "存在即可，不需要盖过真正有吸引力的内容。",
+            price: "30",
+            unit: "余烬",
+            strike: "周限 10 次",
+            note: "用于支撑“顺手补齐”的体验。"
+          }
+        ]
+      },
+      "contract-store": {
+        pageTitle: "合约专卖",
+        modeCopy: "合约专卖页把季票、专属时装和进阶权益绑定在一起展示。",
+        badge: "赛季专属",
+        kicker: "进阶合约",
+        detailTitle: "权益结构",
+        detailCopy: "中部主舞台负责把“为什么要买进阶合约”讲清楚，而不是拆成多张网页卡片。",
+        rewardTitle: "赛季收益",
+        rewardCopy: "右栏强调随赛季推进逐步解锁的附加收益。",
+        railSummaryTitle: "当前赛季亮点",
+        railSummaryCopy: "即时返利、专属头像框与赛季素材三条并排说清楚。",
+        bottomTitle: "售卖逻辑",
+        bottomCopy: "这一页更偏“长期权益购买”，所以收益说明比单次价格更重要。",
+        actionSkin: "buttonBuy",
+        actionNote: "执行动作：购买进阶合约。",
+        priceLabel: "进阶价格",
+        heroImage: "../assets/star_rail_ui/hsr-hub-phone-menu.jpg",
+        heroImageSecondary: "../assets/star_rail_ui/hsr-shop-main.jpg",
+        premiumCount: "8,760",
+        crystalCount: "1,540",
+        meta: ["赛季 21 天", "专属时装", "进阶轨道"],
+        benefits: [
+          {
+            title: "即时返利与长期轨道放在同一屏",
+            desc: "让玩家立刻知道“买下去现在拿什么，之后还能拿什么”。",
+            skin: "benefitBuy"
+          },
+          {
+            title: "每日活跃收益变成顺手补充说明",
+            desc: "不让页面被冗长战令表格淹没。",
+            skin: "benefitDaily"
+          }
+        ],
+        rewards: [
+          {
+            title: "购买即得头像框与星琼返利",
+            tag: "instant",
+            desc: "第一时间回报最适合放右栏顶部。"
+          },
+          {
+            title: "赛季进度额外开放一条奖励轨",
+            tag: "track",
+            desc: "把长期收益收束成一句话，避免信息过载。"
+          },
+          {
+            title: "终局奖励为限定外观",
+            tag: "final",
+            desc: "强化“本赛季错过就没了”的焦点。"
+          }
+        ],
+        offers: [
+          {
+            name: "无名客荣勋·进阶",
+            status: "主推",
+            summary: "即时返利 + 季度持续收益",
+            desc: "把季票的支付动机浓缩为一个中心商品，而非多级权益表。",
+            price: "68",
+            unit: "￥",
+            strike: "原价 ￥88",
+            note: "购买后立即解锁当前等级差额奖励。"
+          },
+          {
+            name: "限定列车时装包",
+            status: "外观",
+            summary: "赛季限定展示价值",
+            desc: "更适合对收藏和展示有需求的玩家。",
+            price: "98",
+            unit: "￥",
+            strike: "原价 ￥128",
+            note: "与合约进阶页共存，但不抢主标题。"
+          },
+          {
+            name: "补档推进凭证",
+            status: "追赶",
+            summary: "适合赛季后半程加入",
+            desc: "帮助玩家从中段快速追上已开放奖励。",
+            price: "30",
+            unit: "￥",
+            strike: "限购 2 次",
+            note: "强调后入玩家的追赶感。"
+          }
+        ]
+      },
+      "dream-capture": {
+        pageTitle: "捕梦网",
+        modeCopy: "捕梦网页更偏活动型售卖，强调氛围、限时故事感和收藏欲。",
+        badge: "活动限定",
+        kicker: "梦境委托",
+        detailTitle: "活动亮点",
+        detailCopy: "主舞台沿用商店骨架，但通过更强的活动包装来制造‘正在发生’的感觉。",
+        rewardTitle: "梦境回收",
+        rewardCopy: "右侧不是普通赠礼，而是活动阶段内可逐步回收的额外收益。",
+        railSummaryTitle: "活动进度收益",
+        railSummaryCopy: "让玩家明白现在投入后，后续几天还有什么持续回报。",
+        bottomTitle: "活动感营造",
+        bottomCopy: "用同样的页面结构承载不同情绪语法，既统一系统又保留活动辨识度。",
+        actionSkin: "buttonBuy",
+        actionNote: "执行动作：获取当前梦境活动商品。",
+        priceLabel: "活动售价",
+        heroImage: "../assets/star_rail_ui/hsr-event-virtual-narration.jpg",
+        heroImageSecondary: "../assets/star_rail_ui/hsr-shop-main.jpg",
+        premiumCount: "9,240",
+        crystalCount: "880",
+        meta: ["活动剩余 6 天", "故事联动", "收藏导向"],
+        benefits: [
+          {
+            title: "以故事活动奖励做第一层价值提示",
+            desc: "把捕梦网从普通货架切成“活动舞台”。",
+            skin: "benefitBuy"
+          },
+          {
+            title: "补给返还拆进右栏，不挤占视觉主焦点",
+            desc: "让主标题区优先服务氛围与主商品。",
+            skin: "benefitDaily"
+          }
+        ],
+        rewards: [
+          {
+            title: "活动徽章与剧情录音",
+            tag: "story",
+            desc: "强调捕梦网的收藏属性，而不是纯资源变现。"
+          },
+          {
+            title: "梦境采样券每日返还",
+            tag: "daily",
+            desc: "为多日回访建立稳定理由。"
+          },
+          {
+            title: "完成委托可换隐藏头像",
+            tag: "secret",
+            desc: "提高这页的探索心情与传播感。"
+          }
+        ],
+        offers: [
+          {
+            name: "梦境采样组合包",
+            status: "限定",
+            summary: "活动资源 + 收集物并存",
+            desc: "把故事票据与资源推进绑定在同一商品上。",
+            price: "45",
+            unit: "￥",
+            strike: "活动价 ￥60",
+            note: "更适合活动期间集中触发。"
+          },
+          {
+            name: "留声纪念册",
+            status: "收藏",
+            summary: "剧情纪念向付费项",
+            desc: "把非战力收藏包装成高辨识度次焦点。",
+            price: "30",
+            unit: "￥",
+            strike: "限购 1 次",
+            note: "适合在同页制造不同购买动机。"
+          },
+          {
+            name: "梦网回响钥匙",
+            status: "推进",
+            summary: "缩短活动资源回收节奏",
+            desc: "服务高活跃玩家，但不抢走限定套装的焦点。",
+            price: "12",
+            unit: "￥",
+            strike: "每日限购",
+            note: "偏轻量补充型道具。"
+          }
+        ]
+      },
+      "crystal-purchase": {
+        pageTitle: "结晶购入",
+        modeCopy: "结晶购入页保留最强的付费指向，所以把首购、档位与返利写得最直接。",
+        badge: "首购返利",
+        kicker: "直充档位",
+        detailTitle: "档位重点",
+        detailCopy: "保持大商品舞台，但把价格档位与首购收益做得更清晰、更像游戏内充值页。",
+        rewardTitle: "充值说明",
+        rewardCopy: "右栏用于承载首购、月度返利与累计赠送，不把规则塞进长段文字。",
+        railSummaryTitle: "首充提醒",
+        railSummaryCopy: "先告诉玩家哪一档最划算，再告诉他返利什么时候结束。",
+        bottomTitle: "付费入口",
+        bottomCopy: "这是整组页面里最接近真实充值的入口，因此价格与返利必须最醒目。",
+        actionSkin: "buttonBuy",
+        actionNote: "执行动作：购买当前结晶档位。",
+        priceLabel: "当前档位",
+        heroImage: "../assets/star_rail_ui/hsr-shop-main.jpg",
+        heroImageSecondary: "../assets/star_rail_ui/hsr-wish-stellar-warp.jpg",
+        premiumCount: "12,840",
+        crystalCount: "1,260",
+        meta: ["首购返双倍", "档位清晰", "高转化区"],
+        benefits: [
+          {
+            title: "首购返利与常规赠送并列呈现",
+            desc: "解决玩家在直充页最常见的两类决策问题。",
+            skin: "benefitBuy"
+          },
+          {
+            title: "每日福利不抢充值主焦点，只做补充背书",
+            desc: "避免把直充页面做成内容页或活动页。",
+            skin: "benefitDaily"
+          }
+        ],
+        rewards: [
+          {
+            title: "680 档推荐作为默认焦点",
+            tag: "popular",
+            desc: "最适合承接从推荐页跳过来的购买意图。"
+          },
+          {
+            title: "首购双倍剩余次数显式可见",
+            tag: "x2",
+            desc: "减少用户对规则的翻找成本。"
+          },
+          {
+            title: "高档位额外赠送比例单独列出",
+            tag: "bonus",
+            desc: "让高客单档位也有独立解释空间。"
+          }
+        ],
+        offers: [
+          {
+            name: "结晶档位 680",
+            status: "推荐",
+            summary: "最常用的中段付费点",
+            desc: "作为默认焦点最合理，兼顾冲动消费与活动补差。",
+            price: "68",
+            unit: "￥",
+            strike: "首购双倍可用",
+            note: "首购阶段可额外再得等量结晶。"
+          },
+          {
+            name: "结晶档位 1980",
+            status: "进阶",
+            summary: "适合活动期连买礼包",
+            desc: "高于日常但仍在可接受区间内的进阶档。",
+            price: "198",
+            unit: "￥",
+            strike: "赠送 260",
+            note: "与多档礼包搭配时更有感知。"
+          },
+          {
+            name: "结晶档位 3280",
+            status: "高档",
+            summary: "为高客单活动准备",
+            desc: "更高赠送比例应该写清楚但不压过默认推荐档。",
+            price: "328",
+            unit: "￥",
+            strike: "赠送 420",
+            note: "适合冲刺限定外观或角色。"
+          }
+        ]
+      }
+    };
+
+    const categoryOrder = Object.keys(shopData);
+    let currentCategory = "recommend";
+    let selectedOfferIndex = 0;
+
+    const navTabs = Array.from(document.querySelectorAll(".nav-tab"));
+    const heroPanel = document.getElementById("hero-panel");
+    const offerGrid = document.getElementById("offer-grid");
+    const benefitList = document.getElementById("benefit-list");
+    const rewardList = document.getElementById("reward-list");
+    const toast = document.getElementById("toast");
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => {
+        toast.classList.remove("show");
+      }, 1600);
+    }
+
+    function renderBenefits(data) {
+      benefitList.innerHTML = data.benefits.map((item) => `
+        <div class="benefit-row">
+          <img src="${assetMap[item.skin]}" alt="">
+          <div class="benefit-copy">
+            <strong>${item.title}</strong>
+            <span>${item.desc}</span>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function renderRewards(data) {
+      rewardList.innerHTML = data.rewards.map((item) => `
+        <div class="reward-item">
+          <div class="reward-title">
+            <strong>${item.title}</strong>
+            <span class="reward-tag">${item.tag}</span>
+          </div>
+          <span>${item.desc}</span>
+        </div>
+      `).join("");
+    }
+
+    function renderOffers(data) {
+      offerGrid.innerHTML = data.offers.map((item, index) => `
+        <button class="offer-card ${index === selectedOfferIndex ? "active" : ""}" data-offer-index="${index}">
+          <div class="offer-top">
+            <strong>${item.name}</strong>
+            <span class="offer-state">${item.status}</span>
+          </div>
+          <span>${item.summary}</span>
+          <em>${item.desc}</em>
+          <div class="offer-price">${item.unit}${item.price} · ${item.note}</div>
+        </button>
+      `).join("");
+
+      offerGrid.querySelectorAll(".offer-card").forEach((card) => {
+        card.addEventListener("click", () => {
+          selectedOfferIndex = Number(card.dataset.offerIndex);
+          renderCurrentState();
+        });
+      });
+    }
+
+    function renderCurrentState() {
+      const data = shopData[currentCategory];
+      const offer = data.offers[selectedOfferIndex];
+
+      navTabs.forEach((tab) => {
+        tab.classList.toggle("active", tab.dataset.category === currentCategory);
+      });
+
+      document.documentElement.style.setProperty("--accent", currentCategory === "dream-capture" ? "#8ac8ff" : "#e0b76c");
+
+      document.getElementById("page-title").textContent = data.pageTitle;
+      document.getElementById("mode-copy").textContent = data.modeCopy;
+      document.getElementById("badge-copy").textContent = data.badge;
+      document.getElementById("hero-kicker").textContent = data.kicker;
+      document.getElementById("detail-title").textContent = data.detailTitle;
+      document.getElementById("detail-copy").textContent = data.detailCopy;
+      document.getElementById("reward-title").textContent = data.rewardTitle;
+      document.getElementById("reward-copy").textContent = data.rewardCopy;
+      document.getElementById("rail-summary-title").textContent = data.railSummaryTitle;
+      document.getElementById("rail-summary-copy").textContent = data.railSummaryCopy;
+      document.getElementById("bottom-title").textContent = data.bottomTitle;
+      document.getElementById("bottom-copy").textContent = data.bottomCopy;
+      document.getElementById("premium-count").textContent = data.premiumCount;
+      document.getElementById("crystal-count").textContent = data.crystalCount;
+      document.getElementById("price-label").textContent = data.priceLabel;
+      document.getElementById("hero-title").textContent = offer.name;
+      document.getElementById("hero-desc").textContent = offer.desc;
+      document.getElementById("price-unit").textContent = offer.unit;
+      document.getElementById("price-value").textContent = offer.price;
+      document.getElementById("price-strike").textContent = offer.strike;
+      document.getElementById("price-note").textContent = offer.note;
+      document.getElementById("action-note").textContent = data.actionNote;
+      document.getElementById("primary-action-skin").src = assetMap[data.actionSkin];
+      document.getElementById("hero-image").style.backgroundImage = `url("${data.heroImage}")`;
+      document.getElementById("hero-image-secondary").style.backgroundImage = `url("${data.heroImageSecondary}")`;
+
+      const metaWrap = document.getElementById("hero-meta");
+      metaWrap.innerHTML = data.meta.map((item) => `<span class="meta-chip">${item}</span>`).join("");
+
+      renderBenefits(data);
+      renderRewards(data);
+      renderOffers(data);
+
+      heroPanel.classList.remove("content-fade");
+      void heroPanel.offsetWidth;
+      heroPanel.classList.add("content-fade");
+    }
+
+    navTabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        currentCategory = tab.dataset.category;
+        selectedOfferIndex = 0;
+        renderCurrentState();
+      });
+    });
+
+    document.getElementById("primary-action").addEventListener("click", () => {
+      const offer = shopData[currentCategory].offers[selectedOfferIndex];
+      showToast(`已预演操作：${offer.name}`);
+    });
+
+    document.getElementById("preview-button").addEventListener("click", () => {
+      const summary = shopData[currentCategory].rewards[0];
+      showToast(`附赠预览：${summary.title}`);
+    });
+
+    document.getElementById("secondary-button").addEventListener("click", () => {
+      showToast(`${shopData[currentCategory].pageTitle}：规则与刷新说明已展开`);
+    });
+
+    document.getElementById("wish-button").addEventListener("click", () => {
+      const offer = shopData[currentCategory].offers[selectedOfferIndex];
+      showToast(`已加入心愿单：${offer.name}`);
+    });
+
+    document.getElementById("switch-button").addEventListener("click", () => {
+      const currentIndex = categoryOrder.indexOf(currentCategory);
+      currentCategory = categoryOrder[(currentIndex + 1) % categoryOrder.length];
+      selectedOfferIndex = 0;
+      renderCurrentState();
+    });
+
+    document.getElementById("close-prototype").addEventListener("click", () => {
+      showToast("这是界面原型页，当前仅演示店铺布局与状态切换");
+    });
+
+    renderCurrentState();
+  </script>
+</body>
+</html>

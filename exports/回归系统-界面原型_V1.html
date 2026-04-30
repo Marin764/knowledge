@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>回归系统界面原型 V1</title>
+  <style>
+    :root {
+      --bg: #0d1320;
+      --ink: #eff2ff;
+      --muted: #a4afc9;
+      --gold: #e2b768;
+      --gold-deep: #8e6528;
+      --cyan: #7bd2d9;
+      --rose: #d87c88;
+      --panel: rgba(15, 20, 33, 0.78);
+      --panel-strong: rgba(13, 17, 29, 0.92);
+      --line: rgba(255, 255, 255, 0.1);
+      --glow: 0 24px 60px rgba(0, 0, 0, 0.38);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 18%, rgba(123, 210, 217, 0.2), transparent 24%),
+        radial-gradient(circle at 78% 16%, rgba(226, 183, 104, 0.18), transparent 24%),
+        radial-gradient(circle at 50% 75%, rgba(216, 124, 136, 0.14), transparent 30%),
+        linear-gradient(180deg, #11192b 0%, #070b13 100%);
+      font: 16px/1.5 "Segoe UI", "PingFang SC", "Microsoft YaHei UI", sans-serif;
+    }
+
+    .viewport {
+      width: min(calc(100vw - 36px), calc((100vh - 36px) * 16 / 9));
+      aspect-ratio: 16 / 9;
+      position: relative;
+      overflow: hidden;
+      border-radius: 34px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: var(--glow);
+      background:
+        linear-gradient(160deg, rgba(15, 25, 42, 0.94), rgba(9, 13, 22, 0.98)),
+        radial-gradient(circle at center, rgba(123, 210, 217, 0.08), transparent 48%);
+    }
+
+    .viewport::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.03) 0, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 80px),
+        linear-gradient(rgba(255,255,255,0.03) 0, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 80px);
+      mask-image: linear-gradient(180deg, rgba(0,0,0,0.3), rgba(0,0,0,0));
+      pointer-events: none;
+    }
+
+    .backdrop-figure {
+      position: absolute;
+      inset: 12% 6% 10% auto;
+      width: 30%;
+      border-radius: 999px 999px 24px 24px;
+      background:
+        radial-gradient(circle at 40% 12%, rgba(255,255,255,0.24), transparent 22%),
+        radial-gradient(circle at 58% 32%, rgba(226, 183, 104, 0.12), transparent 36%),
+        linear-gradient(180deg, rgba(124, 139, 175, 0.18), rgba(11, 15, 24, 0.04));
+      filter: blur(2px);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .backdrop-figure::after {
+      content: "";
+      position: absolute;
+      inset: auto -8% -2% -8%;
+      height: 34%;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(226, 183, 104, 0.28), transparent 68%);
+    }
+
+    .hud-top {
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      top: 20px;
+      display: grid;
+      grid-template-columns: 220px 1fr 420px;
+      align-items: center;
+      gap: 18px;
+      z-index: 2;
+    }
+
+    .brand,
+    .status-bar,
+    .resource-bar,
+    .left-rail,
+    .center-stage,
+    .right-rail,
+    .bottom-bar,
+    .toast {
+      backdrop-filter: blur(14px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(12, 16, 28, 0.7);
+      border: 1px solid var(--line);
+    }
+
+    .crest {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: linear-gradient(145deg, rgba(226, 183, 104, 0.95), rgba(135, 96, 36, 0.95));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.35);
+      flex-shrink: 0;
+    }
+
+    .brand strong {
+      display: block;
+      font-size: 15px;
+      letter-spacing: 0.06em;
+    }
+
+    .brand span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 12px 18px;
+      border-radius: 18px;
+      background: rgba(12, 16, 28, 0.64);
+      border: 1px solid var(--line);
+      min-width: 0;
+    }
+
+    .status-pill {
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+      font-size: 13px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .status-pill strong {
+      color: var(--ink);
+      font-size: 14px;
+      margin-right: 6px;
+    }
+
+    .status-pill.gold {
+      background: rgba(226, 183, 104, 0.12);
+      color: #f2d8a6;
+    }
+
+    .status-pill.cyan {
+      background: rgba(123, 210, 217, 0.12);
+      color: #b5eff2;
+    }
+
+    .resource-bar {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 18px;
+      background: rgba(12, 16, 28, 0.68);
+      border: 1px solid var(--line);
+    }
+
+    .resource {
+      min-width: 92px;
+      padding: 9px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      text-align: center;
+    }
+
+    .resource small {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .resource strong {
+      display: block;
+      margin-top: 2px;
+      font-size: 17px;
+    }
+
+    .layout {
+      position: absolute;
+      inset: 98px 24px 96px;
+      display: grid;
+      grid-template-columns: 230px minmax(0, 1fr) 320px;
+      gap: 18px;
+      z-index: 2;
+    }
+
+    .left-rail,
+    .center-stage,
+    .right-rail,
+    .bottom-bar {
+      border-radius: 26px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    .left-rail {
+      padding: 18px 16px;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      gap: 14px;
+    }
+
+    .comeback-badge {
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(226, 183, 104, 0.22), rgba(120, 81, 27, 0.16));
+      border: 1px solid rgba(226, 183, 104, 0.22);
+    }
+
+    .comeback-badge span {
+      display: block;
+      font-size: 12px;
+      color: #f3ddb2;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .comeback-badge strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 24px;
+    }
+
+    .nav-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .nav-item {
+      width: 100%;
+      text-align: left;
+      padding: 14px 14px 14px 16px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.04);
+      color: var(--ink);
+      border: 1px solid rgba(255,255,255,0.06);
+      cursor: pointer;
+      transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+    }
+
+    .nav-item:hover {
+      transform: translateX(2px);
+      border-color: rgba(226, 183, 104, 0.28);
+      background: rgba(255,255,255,0.08);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(226, 183, 104, 0.22), rgba(40, 47, 66, 0.65));
+      border-color: rgba(226, 183, 104, 0.34);
+      box-shadow: inset 3px 0 0 rgba(226, 183, 104, 0.88);
+    }
+
+    .nav-item strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 15px;
+    }
+
+    .nav-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .left-note {
+      align-self: end;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(123, 210, 217, 0.08);
+      border: 1px solid rgba(123, 210, 217, 0.14);
+      color: #bfecef;
+      font-size: 13px;
+    }
+
+    .center-stage {
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .center-stage::after {
+      content: "";
+      position: absolute;
+      inset: auto -8% -16% 40%;
+      height: 220px;
+      background: radial-gradient(circle, rgba(226, 183, 104, 0.2), transparent 68%);
+      pointer-events: none;
+    }
+
+    .stage-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 18px;
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stage-header small {
+      display: inline-block;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      color: var(--muted);
+      margin-bottom: 10px;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .stage-header h1 {
+      margin: 0 0 8px;
+      font-size: 38px;
+      line-height: 1.06;
+      font-family: Georgia, "Times New Roman", "Kaiti SC", serif;
+    }
+
+    .stage-header p {
+      margin: 0;
+      max-width: 44ch;
+      color: var(--muted);
+    }
+
+    .main-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) 280px;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .card {
+      padding: 18px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .card h2,
+    .card h3 {
+      margin: 0 0 12px;
+      font-size: 22px;
+    }
+
+    .progress-strip {
+      display: grid;
+      gap: 14px;
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+    }
+
+    .progress-top strong {
+      font-size: 30px;
+      color: #fff5de;
+    }
+
+    .progress-bar {
+      position: relative;
+      height: 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      overflow: hidden;
+    }
+
+    .progress-bar::after {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 48%;
+      background: linear-gradient(90deg, #f0c676, #94edf0);
+      border-radius: inherit;
+      box-shadow: 0 0 16px rgba(226, 183, 104, 0.4);
+    }
+
+    .milestones {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .milestone {
+      padding: 12px 10px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+      text-align: center;
+    }
+
+    .milestone strong {
+      display: block;
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
+
+    .milestone span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .milestone.current {
+      background: rgba(123, 210, 217, 0.14);
+      border-color: rgba(123, 210, 217, 0.26);
+    }
+
+    .milestone.claimable {
+      background: rgba(226, 183, 104, 0.15);
+      border-color: rgba(226, 183, 104, 0.32);
+    }
+
+    .tasks {
+      display: grid;
+      gap: 10px;
+    }
+
+    .task {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .task-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      background: rgba(123, 210, 217, 0.14);
+      color: #c7f7fa;
+    }
+
+    .task-copy strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .task-copy span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .task button,
+    .reward button,
+    .bottom-bar button {
+      border: 0;
+      cursor: pointer;
+      color: #fff7ea;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .task button {
+      padding: 11px 14px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(47, 123, 116, 0.95), rgba(22, 58, 54, 0.95));
+    }
+
+    .right-stage {
+      display: grid;
+      gap: 16px;
+    }
+
+    .reward {
+      padding: 18px;
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(34, 25, 18, 0.65), rgba(15, 18, 28, 0.82));
+      border: 1px solid rgba(226, 183, 104, 0.24);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+
+    .reward small {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(226, 183, 104, 0.16);
+      color: #f2d8a6;
+      margin-bottom: 12px;
+      font-size: 12px;
+    }
+
+    .reward h3 {
+      margin: 0 0 8px;
+      font-size: 24px;
+      font-family: Georgia, "Times New Roman", "Kaiti SC", serif;
+    }
+
+    .reward p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .reward-visual {
+      height: 160px;
+      border-radius: 18px;
+      margin-bottom: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background:
+        radial-gradient(circle at 50% 18%, rgba(255,255,255,0.24), transparent 24%),
+        radial-gradient(circle at 50% 56%, rgba(226, 183, 104, 0.2), transparent 42%),
+        linear-gradient(180deg, rgba(93, 77, 56, 0.5), rgba(18, 20, 30, 0.5));
+      position: relative;
+      overflow: hidden;
+    }
+
+    .reward-visual::after {
+      content: "";
+      position: absolute;
+      inset: 20px 28% 18px 28%;
+      border-radius: 120px 120px 28px 28px;
+      background: linear-gradient(180deg, rgba(242, 219, 167, 0.32), rgba(255,255,255,0.04));
+      filter: blur(1px);
+    }
+
+    .reward ul {
+      margin: 0 0 14px;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .reward button {
+      width: 100%;
+      padding: 13px 16px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(226, 183, 104, 0.98), rgba(142, 101, 40, 0.96));
+      color: #261807;
+    }
+
+    .benefits {
+      display: grid;
+      gap: 10px;
+    }
+
+    .benefit {
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .benefit strong {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 14px;
+    }
+
+    .benefit span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .right-rail {
+      padding: 18px;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      gap: 14px;
+    }
+
+    .rail-card {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .rail-card h3 {
+      margin: 0 0 10px;
+      font-size: 19px;
+    }
+
+    .rail-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .rail-item {
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .rail-item strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .rail-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .signin-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .signin-day {
+      padding: 12px;
+      border-radius: 14px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+    }
+
+    .signin-day strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .signin-day span {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .signin-day.today {
+      background: rgba(123, 210, 217, 0.14);
+      border-color: rgba(123, 210, 217, 0.26);
+    }
+
+    .signin-day.epic {
+      background: rgba(226, 183, 104, 0.15);
+      border-color: rgba(226, 183, 104, 0.3);
+    }
+
+    .bottom-bar {
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      bottom: 20px;
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      z-index: 2;
+      background: rgba(12, 16, 28, 0.74);
+    }
+
+    .bottom-copy strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 2px;
+    }
+
+    .bottom-copy span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .bottom-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .btn-secondary,
+    .btn-primary {
+      padding: 13px 18px;
+      border-radius: 16px;
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, rgba(226, 183, 104, 0.98), rgba(152, 108, 40, 0.96));
+      color: #261807;
+    }
+
+    .toast {
+      position: absolute;
+      right: 26px;
+      bottom: 92px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(8, 11, 18, 0.92);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #fff7ea;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 160ms ease, transform 160ms ease;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .screen-label {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--muted);
+      font-size: 12px;
+      z-index: 2;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="viewport">
+    <div class="screen-label">16:9 HTML Game UI Mockup</div>
+    <div class="backdrop-figure" aria-hidden="true"></div>
+
+    <header class="hud-top">
+      <div class="brand">
+        <div class="crest" aria-hidden="true"></div>
+        <div>
+          <strong>归途重燃</strong>
+          <span>回归系统界面原型</span>
+        </div>
+      </div>
+
+      <div class="status-bar">
+        <div class="status-pill gold"><strong>回归期</strong>第 2 阶段</div>
+        <div class="status-pill cyan"><strong>保护期</strong>剩余 14 天</div>
+        <div class="status-pill"><strong>倒计时</strong>27 天 07 小时</div>
+      </div>
+
+      <div class="resource-bar">
+        <div class="resource">
+          <small>回归点数</small>
+          <strong>120</strong>
+        </div>
+        <div class="resource">
+          <small>可领奖励</small>
+          <strong>03</strong>
+        </div>
+        <div class="resource">
+          <small>今日任务</small>
+          <strong>02</strong>
+        </div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="left-rail">
+        <div class="comeback-badge">
+          <span>Comeback Status</span>
+          <strong>少侠，欢迎归队</strong>
+        </div>
+
+        <nav class="nav-list" aria-label="回归模块导航">
+          <button class="nav-item active" data-panel="progress">
+            <strong>回归进程</strong>
+            <span>看见当前阶段与里程碑推进</span>
+          </button>
+          <button class="nav-item" data-panel="signin">
+            <strong>重逢签到</strong>
+            <span>连续登录领取每日奖励</span>
+          </button>
+          <button class="nav-item" data-panel="reward">
+            <strong>回归好礼</strong>
+            <span>查看高价值奖励与限时特权</span>
+          </button>
+          <button class="nav-item" data-panel="catchup">
+            <strong>追赶助力</strong>
+            <span>低门槛玩法与追赶福利</span>
+          </button>
+          <button class="nav-item" data-panel="guide">
+            <strong>版本指引</strong>
+            <span>快速了解当前版本该玩什么</span>
+          </button>
+        </nav>
+
+        <div class="left-note">
+          这是游戏界面稿，不是网页专题页。保留了游戏式 HUD、模块导航和界面分区，但仍由 HTML/CSS 构建。
+        </div>
+      </aside>
+
+      <main class="center-stage">
+        <div class="stage-header">
+          <div>
+            <small id="panel-kicker">Progress Overview</small>
+            <h1 id="panel-title">回归进程</h1>
+            <p id="panel-desc">先确认你离当前阶段还差多少，再决定今天优先处理哪两个动作。</p>
+          </div>
+        </div>
+
+        <div class="main-grid">
+          <div class="stack">
+            <section class="card" id="main-top-card"></section>
+            <section class="card" id="main-bottom-card"></section>
+          </div>
+
+          <div class="right-stage">
+            <section class="reward" id="reward-feature"></section>
+            <section class="card" id="sub-benefits"></section>
+          </div>
+        </div>
+      </main>
+
+      <aside class="right-rail">
+        <section class="rail-card">
+          <h3>今日提醒</h3>
+          <div class="rail-list">
+            <div class="rail-item">
+              <strong>优先领取签到</strong>
+              <span>今天有 1 份登录奖励可直接入账。</span>
+            </div>
+            <div class="rail-item">
+              <strong>完成 1 场低门槛玩法</strong>
+              <span>优先去追忆战场，3 分钟可拿到回归点数。</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="rail-card">
+          <h3>七日签到</h3>
+          <div class="signin-grid">
+            <div class="signin-day">
+              <strong>第 1 天</strong>
+              <span>已领取</span>
+            </div>
+            <div class="signin-day today">
+              <strong>第 2 天</strong>
+              <span>今日可领</span>
+            </div>
+            <div class="signin-day">
+              <strong>第 3 天</strong>
+              <span>待开启</span>
+            </div>
+            <div class="signin-day">
+              <strong>第 4 天</strong>
+              <span>待开启</span>
+            </div>
+            <div class="signin-day">
+              <strong>第 5 天</strong>
+              <span>待开启</span>
+            </div>
+            <div class="signin-day epic">
+              <strong>第 7 天</strong>
+              <span>终极大奖</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="rail-card">
+          <h3>回归特权</h3>
+          <div class="rail-list">
+            <div class="rail-item">
+              <strong>保护期生效中</strong>
+              <span>14 天内享受回流保护与推荐引导。</span>
+            </div>
+            <div class="rail-item">
+              <strong>高价值奖励可预览</strong>
+              <span>皮肤、时装或礼包保持常驻展示。</span>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <footer class="bottom-bar">
+      <div class="bottom-copy">
+        <strong>设计意图</strong>
+        <span>综合四款回归系统规范，形成一个可继续细化的 16:9 主界面原型。</span>
+      </div>
+      <div class="bottom-actions">
+        <button class="btn-secondary" data-toast="已切换到回归任务视图">查看规则</button>
+        <button class="btn-secondary" data-toast="已打开奖励总览弹层">奖励总览</button>
+        <button class="btn-primary" data-toast="继续今日推荐回归路径">继续回归</button>
+      </div>
+    </footer>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </div>
+
+  <script>
+    const panelData = {
+      progress: {
+        kicker: "Progress Overview",
+        title: "回归进程",
+        desc: "先确认当前阶段、里程碑和任务缺口，再决定今天优先推进哪两步。",
+        top: `
+          <h2>阶段进度</h2>
+          <div class="progress-strip">
+            <div class="progress-top">
+              <div>
+                <div style="color: var(--muted); font-size: 13px;">当前回归点数</div>
+                <strong>120 / 400</strong>
+              </div>
+              <div style="text-align:right; color: var(--muted); font-size: 13px;">
+                下一节点奖励
+                <div style="color: #f2d8a6; font-weight: 700; margin-top: 4px;">200 点 · 自选时装箱</div>
+              </div>
+            </div>
+            <div class="progress-bar"></div>
+            <div class="milestones">
+              <div class="milestone">
+                <strong>50</strong>
+                <span>已达成</span>
+              </div>
+              <div class="milestone current">
+                <strong>100</strong>
+                <span>当前阶段</span>
+              </div>
+              <div class="milestone claimable">
+                <strong>200</strong>
+                <span>下个目标</span>
+              </div>
+              <div class="milestone">
+                <strong>300</strong>
+                <span>高级奖励</span>
+              </div>
+              <div class="milestone">
+                <strong>400</strong>
+                <span>终极大奖</span>
+              </div>
+            </div>
+          </div>
+        `,
+        bottom: `
+          <h3>今日推荐任务</h3>
+          <div class="tasks">
+            <div class="task">
+              <div class="task-badge">01</div>
+              <div class="task-copy">
+                <strong>领取今日回归签到</strong>
+                <span>即时获得补给箱和 20 回归点数。</span>
+              </div>
+              <button data-toast="已前往签到模块">前往</button>
+            </div>
+            <div class="task">
+              <div class="task-badge">02</div>
+              <div class="task-copy">
+                <strong>完成 1 场追忆战场</strong>
+                <span>预计 3 分钟，适合作为回归后的第一场战斗。</span>
+              </div>
+              <button data-toast="已前往追忆战场">前往</button>
+            </div>
+            <div class="task">
+              <div class="task-badge">03</div>
+              <div class="task-copy">
+                <strong>查看版本变化摘要</strong>
+                <span>快速了解当前版本值得优先参与的内容。</span>
+              </div>
+              <button data-toast="已展开版本指引">查看</button>
+            </div>
+          </div>
+        `,
+        feature: `
+          <small>Featured Reward</small>
+          <h3>回归限定外观箱</h3>
+          <p>把高价值奖励常驻放在主界面右侧，让玩家始终知道“回归值得拿什么”。</p>
+          <div class="reward-visual"></div>
+          <ul>
+            <li>200 点可解锁自选外观</li>
+            <li>400 点追加传说品质特效</li>
+          </ul>
+          <button data-toast="已预览回归限定外观">预览奖励</button>
+        `,
+        benefits: `
+          <h3>追赶助力</h3>
+          <div class="benefits">
+            <div class="benefit">
+              <strong>回流保护</strong>
+              <span>14 天内享受友好匹配与引导提示。</span>
+            </div>
+            <div class="benefit">
+              <strong>快速成长</strong>
+              <span>核心任务和追赶玩法优先给予点数奖励。</span>
+            </div>
+          </div>
+        `
+      },
+      signin: {
+        kicker: "Sign-in Reward",
+        title: "重逢签到",
+        desc: "连续签到仍是回归系统的关键支点，但在主界面里直接用格位状态表达今日动作。",
+        top: `
+          <h2>签到说明</h2>
+          <div class="rail-list">
+            <div class="rail-item">
+              <strong>今日目标</strong>
+              <span>第 2 天签到奖励可立即领取，完成后会刷新回归点数。</span>
+            </div>
+            <div class="rail-item">
+              <strong>长期目标</strong>
+              <span>第 7 天提供终极大奖，用于稳定连续回访。</span>
+            </div>
+          </div>
+        `,
+        bottom: `
+          <h3>奖励节奏</h3>
+          <div class="tasks">
+            <div class="task">
+              <div class="task-badge">今</div>
+              <div class="task-copy">
+                <strong>回归补给箱</strong>
+                <span>领取后立刻获得强化素材与 20 点回归点数。</span>
+              </div>
+              <button data-toast="今日签到奖励已领取">领取</button>
+            </div>
+            <div class="task">
+              <div class="task-badge">7</div>
+              <div class="task-copy">
+                <strong>终极大奖</strong>
+                <span>第 7 日解锁高价值外观或大额货币奖励。</span>
+              </div>
+              <button data-toast="已预览第 7 日大奖">预览</button>
+            </div>
+          </div>
+        `,
+        feature: `
+          <small>Daily Highlight</small>
+          <h3>第 2 日补给</h3>
+          <p>使用清晰的“今日可领”视觉状态，而不是隐藏在二级弹层中。</p>
+          <div class="reward-visual"></div>
+          <ul>
+            <li>强化素材包 x1</li>
+            <li>回归点数 +20</li>
+          </ul>
+          <button data-toast="已执行签到领取动作">领取奖励</button>
+        `,
+        benefits: `
+          <h3>状态规则</h3>
+          <div class="benefits">
+            <div class="benefit">
+              <strong>今日可领</strong>
+              <span>用高亮和按钮承载当前最优先动作。</span>
+            </div>
+            <div class="benefit">
+              <strong>未来锁定</strong>
+              <span>后续天数保持半透明，形成连续登录预期。</span>
+            </div>
+          </div>
+        `
+      },
+      reward: {
+        kicker: "Featured Reward",
+        title: "回归好礼",
+        desc: "高价值奖励必须在回归界面中占据足够权重，它不是附属说明，而是回流动机本身。",
+        top: `
+          <h2>高价值内容</h2>
+          <div class="rail-list">
+            <div class="rail-item">
+              <strong>限定外观</strong>
+              <span>回归期间通过阶段进度和签到都可逐步解锁。</span>
+            </div>
+            <div class="rail-item">
+              <strong>专属礼包</strong>
+              <span>展示即时可得内容，避免购买价值不透明。</span>
+            </div>
+          </div>
+        `,
+        bottom: `
+          <h3>奖励选择</h3>
+          <div class="tasks">
+            <div class="task">
+              <div class="task-badge">A</div>
+              <div class="task-copy">
+                <strong>自选时装箱</strong>
+                <span>适合内容驱动或审美驱动的回归玩家。</span>
+              </div>
+              <button data-toast="已预览自选时装箱">预览</button>
+            </div>
+            <div class="task">
+              <div class="task-badge">B</div>
+              <div class="task-copy">
+                <strong>战力补给包</strong>
+                <span>适合希望快速追赶进度的回归玩家。</span>
+              </div>
+              <button data-toast="已查看战力补给包">查看</button>
+            </div>
+          </div>
+        `,
+        feature: `
+          <small>Premium Hook</small>
+          <h3>回归传说皮肤</h3>
+          <p>借鉴高价值回流钩子思路，把皮肤/时装/特效做成高权重展示位。</p>
+          <div class="reward-visual"></div>
+          <ul>
+            <li>阶段达成可免费解锁基础版</li>
+            <li>活跃任务可追加特殊入场特效</li>
+          </ul>
+          <button data-toast="已打开皮肤预览界面">查看皮肤</button>
+        `,
+        benefits: `
+          <h3>呈现原则</h3>
+          <div class="benefits">
+            <div class="benefit">
+              <strong>价值前置</strong>
+              <span>让玩家第一眼就知道最值得回来的奖励是什么。</span>
+            </div>
+            <div class="benefit">
+              <strong>领取透明</strong>
+              <span>清楚说明解锁条件和立即可得内容。</span>
+            </div>
+          </div>
+        `
+      },
+      catchup: {
+        kicker: "Catch-up Assistance",
+        title: "追赶助力",
+        desc: "回归玩家最怕回到一个自己已经落后的环境，所以这里要先表达“低压力、低门槛、可快速恢复”。",
+        top: `
+          <h2>低门槛玩法</h2>
+          <div class="rail-list">
+            <div class="rail-item">
+              <strong>追忆战场</strong>
+              <span>预计耗时 3 分钟，不消耗正式副本次数。</span>
+            </div>
+            <div class="rail-item">
+              <strong>回流训练</strong>
+              <span>完成基础操作后获得额外回归点数与强化材料。</span>
+            </div>
+          </div>
+        `,
+        bottom: `
+          <h3>建议路径</h3>
+          <div class="tasks">
+            <div class="task">
+              <div class="task-badge">01</div>
+              <div class="task-copy">
+                <strong>先体验追忆战场</strong>
+                <span>用一场短流程战斗重新找回操作节奏。</span>
+              </div>
+              <button data-toast="已前往追忆战场">进入</button>
+            </div>
+            <div class="task">
+              <div class="task-badge">02</div>
+              <div class="task-copy">
+                <strong>领取回流 Buff</strong>
+                <span>确保后续进入正式玩法前已经激活保护与加成。</span>
+              </div>
+              <button data-toast="已激活回流 Buff">激活</button>
+            </div>
+          </div>
+        `,
+        feature: `
+          <small>Low Pressure</small>
+          <h3>回流试炼场</h3>
+          <p>这个展示位强调“3 分钟、低失败成本、即时追赶收益”，用来缓解回归焦虑。</p>
+          <div class="reward-visual"></div>
+          <ul>
+            <li>预计耗时 3 分钟</li>
+            <li>首通额外赠送回归点数</li>
+          </ul>
+          <button data-toast="已预览追赶玩法详情">查看玩法</button>
+        `,
+        benefits: `
+          <h3>保障机制</h3>
+          <div class="benefits">
+            <div class="benefit">
+              <strong>保护期加成</strong>
+              <span>让玩家不必立即面对完整难度环境。</span>
+            </div>
+            <div class="benefit">
+              <strong>短时长承诺</strong>
+              <span>把第一步的心理负担压到最低。</span>
+            </div>
+          </div>
+        `
+      },
+      guide: {
+        kicker: "Version Guidance",
+        title: "版本指引",
+        desc: "回归系统不只是发奖励，还要告诉玩家现在回去玩什么、为什么值得玩、先后顺序是什么。",
+        top: `
+          <h2>回归路线</h2>
+          <div class="rail-list">
+            <div class="rail-item">
+              <strong>第一步</strong>
+              <span>完成签到和回流试炼，建立手感与资源底座。</span>
+            </div>
+            <div class="rail-item">
+              <strong>第二步</strong>
+              <span>查看当前版本重点活动，判断自己想回归的目标玩法。</span>
+            </div>
+            <div class="rail-item">
+              <strong>第三步</strong>
+              <span>再进入正式长线系统，如战令、赛季任务或收集活动。</span>
+            </div>
+          </div>
+        `,
+        bottom: `
+          <h3>推荐内容</h3>
+          <div class="tasks">
+            <div class="task">
+              <div class="task-badge">新</div>
+              <div class="task-copy">
+                <strong>新赛季剧情活动</strong>
+                <span>提供大量回归点数，并且门槛较低。</span>
+              </div>
+              <button data-toast="已查看新赛季活动">查看</button>
+            </div>
+            <div class="task">
+              <div class="task-badge">热</div>
+              <div class="task-copy">
+                <strong>热门角色试用关</strong>
+                <span>适合快速感受版本变化和角色手感。</span>
+              </div>
+              <button data-toast="已查看热门角色试用关">查看</button>
+            </div>
+          </div>
+        `,
+        feature: `
+          <small>Content Highlight</small>
+          <h3>本期推荐玩法</h3>
+          <p>版本引导位承担“把用户送回主玩法”的职责，防止回归系统成为孤岛。</p>
+          <div class="reward-visual"></div>
+          <ul>
+            <li>低门槛活动优先</li>
+            <li>高收益但高复杂度内容后置</li>
+          </ul>
+          <button data-toast="已打开玩法推荐">前往指引</button>
+        `,
+        benefits: `
+          <h3>指引原则</h3>
+          <div class="benefits">
+            <div class="benefit">
+              <strong>先轻后重</strong>
+              <span>先推荐能快速建立信心的内容，再推荐复杂系统。</span>
+            </div>
+            <div class="benefit">
+              <strong>路径清晰</strong>
+              <span>始终告诉玩家下一步该做什么，而不是只给入口。</span>
+            </div>
+          </div>
+        `
+      }
+    };
+
+    const titleEl = document.getElementById("panel-title");
+    const descEl = document.getElementById("panel-desc");
+    const kickerEl = document.getElementById("panel-kicker");
+    const mainTopCard = document.getElementById("main-top-card");
+    const mainBottomCard = document.getElementById("main-bottom-card");
+    const rewardFeature = document.getElementById("reward-feature");
+    const subBenefits = document.getElementById("sub-benefits");
+    const toast = document.getElementById("toast");
+    const navItems = document.querySelectorAll(".nav-item");
+
+    function renderPanel(key) {
+      const data = panelData[key];
+      titleEl.textContent = data.title;
+      descEl.textContent = data.desc;
+      kickerEl.textContent = data.kicker;
+      mainTopCard.innerHTML = data.top;
+      mainBottomCard.innerHTML = data.bottom;
+      rewardFeature.innerHTML = data.feature;
+      subBenefits.innerHTML = data.benefits;
+
+      document.querySelectorAll("[data-toast]").forEach((button) => {
+        button.addEventListener("click", () => showToast(button.dataset.toast));
+      });
+
+      navItems.forEach((button) => {
+        button.classList.toggle("active", button.dataset.panel === key);
+      });
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => {
+        toast.classList.remove("show");
+      }, 1600);
+    }
+
+    navItems.forEach((button) => {
+      button.addEventListener("click", () => renderPanel(button.dataset.panel));
+    });
+
+    renderPanel("progress");
+  </script>
+</body>
+</html>

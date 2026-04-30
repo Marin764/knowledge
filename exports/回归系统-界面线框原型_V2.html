@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>回归系统界面线框原型 V2</title>
+  <style>
+    :root {
+      --bg-a: #d9d9d9;
+      --bg-b: #c6c6c6;
+      --paper: rgba(252, 252, 252, 0.88);
+      --panel: rgba(245, 245, 245, 0.92);
+      --panel-strong: rgba(255, 255, 255, 0.95);
+      --ink: #202020;
+      --muted: #656565;
+      --line: #666;
+      --line-soft: #b5b5b5;
+      --shadow: rgba(0, 0, 0, 0.15);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --radius-sm: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at top, #e7e7e7 0%, #d1d1d1 45%, #b8b8b8 100%);
+      color: var(--ink);
+      font: 14px/1.45 "Segoe UI", "PingFang SC", "Microsoft YaHei UI", sans-serif;
+    }
+
+    button {
+      appearance: none;
+      -webkit-appearance: none;
+      font: inherit;
+      color: inherit;
+      background: none;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .prototype {
+      width: min(calc(100vw - 24px), calc((100vh - 24px) * 16 / 9));
+      aspect-ratio: 16 / 9;
+      position: relative;
+      overflow: hidden;
+      border-radius: 32px;
+      border: 2px solid #4d4d4d;
+      background: linear-gradient(180deg, var(--bg-a), var(--bg-b));
+      box-shadow: 0 24px 60px var(--shadow);
+    }
+
+    .prototype::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 0, 0, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.025) 1px, transparent 1px);
+      background-size: 38px 38px;
+      pointer-events: none;
+    }
+
+    .shell {
+      position: absolute;
+      inset: 16px;
+      display: grid;
+      grid-template-rows: 82px minmax(0, 1fr) 66px;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 24px;
+      border: 1.5px solid var(--line);
+      background: rgba(255, 255, 255, 0.42);
+    }
+
+    .panel {
+      position: relative;
+      min-width: 0;
+      min-height: 0;
+      border: 1.5px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: var(--panel);
+    }
+
+    .chip,
+    .nav-button,
+    .slot,
+    .card,
+    .list-item,
+    .placeholder,
+    .action-button,
+    .reward-cell,
+    .milestone {
+      border: 1.5px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--panel-strong);
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 240px 1fr 330px;
+      gap: 12px;
+    }
+
+    .brand,
+    .headline,
+    .stats {
+      padding: 14px 16px;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .brand strong {
+      font-size: 19px;
+      letter-spacing: 0.04em;
+    }
+
+    .brand span,
+    .headline span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .headline {
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      gap: 10px;
+    }
+
+    .headline-title {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .chip {
+      padding: 7px 12px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      align-content: center;
+    }
+
+    .slot {
+      display: grid;
+      place-items: center;
+      padding: 10px 8px;
+      text-align: center;
+    }
+
+    .slot span {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .slot strong {
+      margin-top: 2px;
+      font-size: 20px;
+    }
+
+    .content-shell {
+      display: grid;
+      grid-template-columns: 178px minmax(0, 1fr);
+      gap: 12px;
+      min-height: 0;
+    }
+
+    .sidebar {
+      padding: 14px 12px;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      gap: 12px;
+    }
+
+    .sidebar h2,
+    .footer-note strong {
+      margin: 0;
+      font-size: 14px;
+      letter-spacing: 0.04em;
+    }
+
+    .sidebar p,
+    .footer-note span {
+      margin: 0;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .nav-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav-button {
+      width: 100%;
+      padding: 12px 12px 11px;
+      text-align: left;
+      transition: background 120ms ease, transform 120ms ease;
+    }
+
+    .nav-button strong {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 2px;
+    }
+
+    .nav-button span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .nav-button.active {
+      background: #fff;
+      outline: 2px solid #8a8a8a;
+      outline-offset: -2px;
+    }
+
+    .nav-button:hover {
+      transform: translateY(-1px);
+    }
+
+    .sidebar-placeholder {
+      display: grid;
+      align-content: end;
+    }
+
+    .guide-card {
+      padding: 12px;
+      border: 1.5px dashed var(--line);
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.55);
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .stage {
+      position: relative;
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+      border-radius: 22px;
+      border: 1.5px solid var(--line);
+      background: rgba(255, 255, 255, 0.32);
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: none;
+      grid-template-rows: 1fr;
+      pointer-events: none;
+      padding: 12px;
+    }
+
+    .screen.active {
+      display: grid;
+      pointer-events: auto;
+    }
+
+    .screen-layout {
+      display: grid;
+      gap: 12px;
+      min-height: 0;
+    }
+
+    .hub-layout {
+      grid-template-columns: minmax(0, 1.18fr) 300px;
+    }
+
+    .detail-layout {
+      grid-template-columns: minmax(0, 1fr) 300px;
+    }
+
+    .stack {
+      display: grid;
+      gap: 12px;
+      min-height: 0;
+    }
+
+    .section {
+      padding: 16px;
+      display: grid;
+      align-content: start;
+      gap: 10px;
+      min-height: 0;
+    }
+
+    .section h3 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: 0.03em;
+    }
+
+    .section p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .hero-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 220px;
+      gap: 12px;
+    }
+
+    .summary-box,
+    .status-box {
+      padding: 14px;
+    }
+
+    .summary-box strong,
+    .status-box strong,
+    .card strong,
+    .placeholder strong,
+    .list-text strong,
+    .reward-cell strong,
+    .milestone strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .summary-box span,
+    .status-box span,
+    .card span,
+    .placeholder span,
+    .list-text span,
+    .reward-cell span,
+    .milestone span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .entry-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .card {
+      padding: 14px;
+      text-align: left;
+      min-height: 124px;
+      transition: background 120ms ease, transform 120ms ease;
+    }
+
+    .card.highlight {
+      background: #fff;
+      outline: 2px solid #8a8a8a;
+      outline-offset: -2px;
+    }
+
+    .card:hover,
+    .action-button:hover {
+      transform: translateY(-1px);
+    }
+
+    .placeholder {
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 14px;
+      border-style: dashed;
+      background: rgba(255, 255, 255, 0.55);
+      min-height: 126px;
+    }
+
+    .assistant-panel,
+    .side-panel {
+      display: grid;
+      gap: 10px;
+    }
+
+    .progress-hero,
+    .signin-hero,
+    .reward-hero {
+      min-height: 176px;
+    }
+
+    .progress-bar {
+      height: 16px;
+      border-radius: 999px;
+      border: 1.5px solid var(--line);
+      background: linear-gradient(90deg, #ffffff 0 42%, #d8d8d8 42% 100%);
+    }
+
+    .milestone-row {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .milestone,
+    .reward-cell {
+      padding: 10px 8px;
+      text-align: center;
+      min-height: 72px;
+    }
+
+    .milestone.current,
+    .reward-cell.current {
+      outline: 2px dashed #888;
+      outline-offset: -2px;
+      background: #fff;
+    }
+
+    .task-list,
+    .route-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .list-item {
+      display: grid;
+      grid-template-columns: 46px minmax(0, 1fr) 96px;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 12px;
+    }
+
+    .index-box {
+      display: grid;
+      place-items: center;
+      height: 38px;
+      border-radius: 10px;
+      border: 1.5px solid var(--line);
+      background: rgba(241, 241, 241, 0.95);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .list-text {
+      min-width: 0;
+    }
+
+    .action-button {
+      display: grid;
+      place-items: center;
+      height: 38px;
+      padding: 0 14px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.95);
+    }
+
+    .signin-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .reward-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .footer {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 14px;
+    }
+
+    .footer-note {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .footer-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .footer-actions .action-button {
+      min-width: 118px;
+      height: 42px;
+    }
+
+    .action-button[disabled] {
+      opacity: 0.45;
+      cursor: default;
+      transform: none;
+    }
+
+    .overlay-shell {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 26px;
+      background: rgba(208, 208, 208, 0.72);
+      z-index: 20;
+    }
+
+    .overlay-shell.active {
+      display: flex;
+    }
+
+    .overlay-card {
+      width: min(560px, 76%);
+      padding: 24px 24px 20px;
+      border: 2px solid var(--line);
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.97);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.14);
+    }
+
+    .overlay-card h2 {
+      margin: 0 0 8px;
+      font-size: 30px;
+      letter-spacing: 0.04em;
+    }
+
+    .overlay-card p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .overlay-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .overlay-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .overlay-actions .action-button {
+      flex: 1;
+      height: 42px;
+    }
+
+    .toast {
+      position: absolute;
+      right: 24px;
+      bottom: 84px;
+      z-index: 30;
+      padding: 10px 12px;
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.95);
+      color: var(--muted);
+      font-size: 12px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 160ms ease, transform 160ms ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="prototype">
+    <div class="shell">
+      <header class="topbar">
+        <section class="panel brand">
+          <strong>重逢计划</strong>
+          <span>回归系统线框原型</span>
+        </section>
+
+        <section class="panel headline">
+          <div class="headline-title" id="page-title">回归总览</div>
+          <div class="chips">
+            <div class="chip">剩余 12 天</div>
+            <div class="chip">保护期 5 天</div>
+            <div class="chip">今日可领 3 项</div>
+          </div>
+        </section>
+
+        <section class="panel stats">
+          <div class="slot">
+            <span>回归点数</span>
+            <strong>120</strong>
+          </div>
+          <div class="slot">
+            <span>阶段奖励</span>
+            <strong>03</strong>
+          </div>
+          <div class="slot">
+            <span>今日任务</span>
+            <strong>02</strong>
+          </div>
+        </section>
+      </header>
+
+      <div class="content-shell">
+        <aside class="panel sidebar">
+          <div>
+            <h2>模块切换</h2>
+            <p>左侧页签用于切换回归系统的主内容。</p>
+          </div>
+
+          <nav class="nav-list">
+            <button class="nav-button active" data-page-target="page.hub">
+              <strong>回归总览</strong>
+              <span>先看今天该做什么</span>
+            </button>
+            <button class="nav-button" data-page-target="page.progress">
+              <strong>回归进程</strong>
+              <span>阶段、节点与任务</span>
+            </button>
+            <button class="nav-button" data-page-target="page.signin">
+              <strong>重逢签到</strong>
+              <span>今日奖励与七日目标</span>
+            </button>
+            <button class="nav-button" data-page-target="page.catchup">
+              <strong>追赶助力</strong>
+              <span>低门槛追赶玩法</span>
+            </button>
+            <button class="nav-button" data-page-target="page.high_value_reward">
+              <strong>回归好礼</strong>
+              <span>高价值奖励展示</span>
+            </button>
+            <button class="nav-button" data-page-target="page.content_guidance">
+              <strong>版本指引</strong>
+              <span>告诉玩家现在玩什么</span>
+            </button>
+          </nav>
+
+          <div class="sidebar-placeholder">
+            <div class="guide-card">
+              角色引导占位
+            </div>
+          </div>
+        </aside>
+
+        <main class="stage">
+          <section class="screen active" id="page.hub">
+            <div class="screen-layout hub-layout">
+              <div class="stack">
+                <section class="panel section">
+                  <h3>回归总览</h3>
+                  <p>先给玩家答案：今天先做什么，现在能领什么，长期追什么。</p>
+                  <div class="hero-summary">
+                    <div class="summary-box chipless card">
+                      <strong>当前阶段：回归准备期</strong>
+                      <span>建议先完成签到，再补回归任务，最后查看高价值奖励。</span>
+                    </div>
+                    <div class="status-box card">
+                      <strong>回归状态稳定</strong>
+                      <span>保护期生效中，追赶玩法已开启。</span>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="panel section">
+                  <h3>主入口区</h3>
+                  <p>点击入口卡直接切到对应页面，主入口不隐藏进二级菜单。</p>
+                  <div class="entry-grid">
+                    <button class="card highlight" data-open="page.signin">
+                      <strong>重逢签到</strong>
+                      <span>今天可领 1 次，终极奖励仍在追逐路径上。</span>
+                    </button>
+                    <button class="card" data-open="page.progress">
+                      <strong>回归进程</strong>
+                      <span>查看当前阶段、可领奖点和待完成任务。</span>
+                    </button>
+                    <button class="card" data-open="page.catchup">
+                      <strong>追赶助力</strong>
+                      <span>快速进入低门槛玩法，缩短回流差距。</span>
+                    </button>
+                    <button class="card" data-open="page.high_value_reward">
+                      <strong>回归好礼</strong>
+                      <span>高价值奖励集中展示，提升长期回流动力。</span>
+                    </button>
+                    <button class="card" data-open="page.content_guidance">
+                      <strong>版本指引</strong>
+                      <span>帮助玩家判断当前版本优先内容。</span>
+                    </button>
+                    <div class="placeholder">
+                      <strong>运营推荐占位</strong>
+                      <span>如礼包、活动横幅或扩展入口</span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+
+              <div class="stack">
+                <section class="panel section assistant-panel">
+                  <h3>活动状态</h3>
+                  <div class="card">
+                    <strong>活动倒计时</strong>
+                    <span>剩余 12 天，适合承载回归活动生命周期。</span>
+                  </div>
+                  <div class="card">
+                    <strong>保护期</strong>
+                    <span>还剩 5 天，失败成本更低，适合先做追赶玩法。</span>
+                  </div>
+                </section>
+
+                <section class="panel section side-panel">
+                  <h3>辅助引导</h3>
+                  <div class="placeholder">
+                    <strong>助手立绘占位</strong>
+                    <span>用于承载 AI/角色引导</span>
+                  </div>
+                  <div class="card">
+                    <strong>今日建议</strong>
+                    <span>先领取签到奖励，再补进程节点，可快速获得正反馈。</span>
+                  </div>
+                  <div class="card">
+                    <strong>回归提醒</strong>
+                    <span>高价值奖励仍可追逐，不必一次做完所有任务。</span>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </section>
+
+          <section class="screen" id="page.progress">
+            <div class="screen-layout detail-layout">
+              <div class="stack">
+                <section class="panel section">
+                  <h3>回归进程</h3>
+                  <p>当前阶段、里程碑节点和任务清单同屏，先看缺口，再决定下一步。</p>
+                  <div class="progress-hero section">
+                    <div class="card">
+                      <strong>阶段点数进度</strong>
+                      <span>当前 120 / 200，距离下个里程碑还差 80 点。</span>
+                    </div>
+                    <div class="progress-bar"></div>
+                    <div class="milestone-row">
+                      <div class="milestone">
+                        <strong>50</strong>
+                        <span>已领</span>
+                      </div>
+                      <div class="milestone current">
+                        <strong>100</strong>
+                        <span>当前</span>
+                      </div>
+                      <div class="milestone">
+                        <strong>200</strong>
+                        <span>可追</span>
+                      </div>
+                      <div class="milestone">
+                        <strong>300</strong>
+                        <span>锁定</span>
+                      </div>
+                      <div class="milestone">
+                        <strong>400</strong>
+                        <span>锁定</span>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="panel section">
+                  <h3>任务清单</h3>
+                  <p>任务项支持直接跳玩法或领取，不让玩家在系统间迷路。</p>
+                  <div class="task-list">
+                    <div class="list-item">
+                      <div class="index-box">01</div>
+                      <div class="list-text">
+                        <strong>完成 1 次追赶玩法</strong>
+                        <span>完成后将点亮下一个里程碑节点。</span>
+                      </div>
+                      <button class="action-button" data-toast="模拟跳转到追赶玩法">前往</button>
+                    </div>
+                    <div class="list-item">
+                      <div class="index-box">02</div>
+                      <div class="list-text">
+                        <strong>领取阶段奖励</strong>
+                        <span>当前可领取 1 项回归阶段奖励。</span>
+                      </div>
+                      <button class="action-button" data-toast="模拟领取阶段奖励">领取</button>
+                    </div>
+                    <div class="list-item">
+                      <div class="index-box">03</div>
+                      <div class="list-text">
+                        <strong>查看版本重点玩法</strong>
+                        <span>把回归路径和当前版本内容重新连起来。</span>
+                      </div>
+                      <button class="action-button" data-open="page.content_guidance">查看</button>
+                    </div>
+                  </div>
+                </section>
+              </div>
+
+              <aside class="stack">
+                <section class="panel section side-panel">
+                  <h3>当前节点</h3>
+                  <div class="card">
+                    <strong>下个目标</strong>
+                    <span>完成 2 项回归任务即可解锁下一阶段奖励。</span>
+                  </div>
+                  <div class="placeholder">
+                    <strong>里程碑奖励占位</strong>
+                    <span>用于奖励预览或节点高亮展示</span>
+                  </div>
+                </section>
+
+                <section class="panel section side-panel">
+                  <h3>推荐动作</h3>
+                  <div class="card">
+                    <strong>优先顺序</strong>
+                    <span>任务补点数 → 领取阶段奖励 → 回到总览看下一步。</span>
+                  </div>
+                </section>
+              </aside>
+            </div>
+          </section>
+
+          <section class="screen" id="page.signin">
+            <div class="screen-layout detail-layout">
+              <div class="stack">
+                <section class="panel section">
+                  <h3>重逢签到</h3>
+                  <p>今天可领态、未来锁定态和终极奖励必须明显区分。</p>
+                  <div class="signin-grid">
+                    <div class="reward-cell">
+                      <strong>第 1 天</strong>
+                      <span>已领取</span>
+                    </div>
+                    <div class="reward-cell current">
+                      <strong>第 2 天</strong>
+                      <span>今日可领</span>
+                    </div>
+                    <div class="reward-cell">
+                      <strong>第 3 天</strong>
+                      <span>未解锁</span>
+                    </div>
+                    <div class="reward-cell">
+                      <strong>第 4 天</strong>
+                      <span>未解锁</span>
+                    </div>
+                    <div class="reward-cell">
+                      <strong>第 5 天</strong>
+                      <span>未解锁</span>
+                    </div>
+                    <div class="reward-cell">
+                      <strong>第 6 天</strong>
+                      <span>未解锁</span>
+                    </div>
+                    <div class="reward-cell current">
+                      <strong>第 7 天</strong>
+                      <span>终极奖励</span>
+                    </div>
+                    <div class="reward-cell">
+                      <strong>累计奖励</strong>
+                      <span>扩展位</span>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="panel section">
+                  <h3>连续回流目标</h3>
+                  <div class="reward-hero placeholder">
+                    <div>
+                      <strong>终极奖励占位</strong>
+                      <span>用于承载大奖或角色奖励展示</span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+
+              <aside class="stack">
+                <section class="panel section side-panel">
+                  <h3>今日奖励</h3>
+                  <div class="card">
+                    <strong>今日可领</strong>
+                    <span>金币、材料、自选礼盒等即时正反馈。</span>
+                  </div>
+                  <div class="card">
+                    <strong>签到进度</strong>
+                    <span>当前 2 / 7，继续签到可接近终极奖励。</span>
+                  </div>
+                </section>
+
+                <section class="panel section side-panel">
+                  <h3>动作区</h3>
+                  <button class="action-button" data-toast="模拟领取签到奖励">立即领取</button>
+                  <button class="action-button" data-open="page.hub">返回总览</button>
+                </section>
+              </aside>
+            </div>
+          </section>
+
+          <section class="screen" id="page.catchup">
+            <div class="screen-layout detail-layout">
+              <div class="stack">
+                <section class="panel section">
+                  <h3>追赶助力</h3>
+                  <p>给回归玩家低压力、低门槛、高回报的追赶入口和支持信息。</p>
+                  <div class="route-list">
+                    <div class="list-item">
+                      <div class="index-box">A</div>
+                      <div class="list-text">
+                        <strong>回流训练</strong>
+                        <span>熟悉操作，奖励稳定，适合第一步进入。</span>
+                      </div>
+                      <button class="action-button" data-toast="模拟进入回流训练">进入</button>
+                    </div>
+                    <div class="list-item">
+                      <div class="index-box">B</div>
+                      <div class="list-text">
+                        <strong>追忆战场</strong>
+                        <span>低门槛副本，适合快速补齐回归点数。</span>
+                      </div>
+                      <button class="action-button" data-toast="模拟进入追忆战场">进入</button>
+                    </div>
+                    <div class="list-item">
+                      <div class="index-box">C</div>
+                      <div class="list-text">
+                        <strong>加成挑战</strong>
+                        <span>保护期内收益更高，适合作为第二阶段动作。</span>
+                      </div>
+                      <button class="action-button" data-toast="模拟进入加成挑战">进入</button>
+                    </div>
+                  </div>
+                </section>
+              </div>
+
+              <aside class="stack">
+                <section class="panel section side-panel">
+                  <h3>支持信息</h3>
+                  <div class="card">
+                    <strong>保护期加成</strong>
+                    <span>失败成本较低，适合先建立回归信心。</span>
+                  </div>
+                  <div class="card">
+                    <strong>推荐路径</strong>
+                    <span>先做训练，再刷追忆战场，最后回到进程页领奖。</span>
+                  </div>
+                  <div class="placeholder">
+                    <strong>角色提示占位</strong>
+                    <span>用于承载玩法推荐或提示语</span>
+                  </div>
+                </section>
+              </aside>
+            </div>
+          </section>
+
+          <section class="screen" id="page.high_value_reward">
+            <div class="screen-layout detail-layout">
+              <div class="stack">
+                <section class="panel section">
+                  <h3>回归好礼</h3>
+                  <p>高价值奖励必须放大展示，不能退化成普通列表项。</p>
+                  <div class="reward-hero placeholder">
+                    <div>
+                      <strong>高价值奖励占位</strong>
+                      <span>适用于皮肤、时装、角色、礼包等主视觉内容</span>
+                    </div>
+                  </div>
+                </section>
+
+                <section class="panel section">
+                  <h3>奖励结构</h3>
+                  <div class="reward-grid">
+                    <div class="reward-cell current">
+                      <strong>主奖励</strong>
+                      <span>当前焦点</span>
+                    </div>
+                    <div class="reward-cell">
+                      <strong>规则说明</strong>
+                      <span>领取 / 试用 / 购买条件</span>
+                    </div>
+                    <div class="reward-cell">
+                      <strong>附加奖励</strong>
+                      <span>长期追逐目标</span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+
+              <aside class="stack">
+                <section class="panel section side-panel">
+                  <h3>价值说明</h3>
+                  <div class="card">
+                    <strong>即时收益</strong>
+                    <span>展示玩家现在拿到什么，为什么值得回流。</span>
+                  </div>
+                  <div class="card">
+                    <strong>行为规则</strong>
+                    <span>描述试用期、活跃要求或领取门槛。</span>
+                  </div>
+                </section>
+
+                <section class="panel section side-panel">
+                  <h3>动作区</h3>
+                  <button class="action-button" data-modal-open="reward-preview">预览奖励</button>
+                  <button class="action-button" data-toast="模拟进入领取 / 试用 / 购买流程">领取或试用</button>
+                </section>
+              </aside>
+            </div>
+          </section>
+
+          <section class="screen" id="page.content_guidance">
+            <div class="screen-layout detail-layout">
+              <div class="stack">
+                <section class="panel section">
+                  <h3>版本指引</h3>
+                  <p>把回归系统和当前版本内容重新连接，告诉玩家现在该玩什么。</p>
+                  <div class="entry-grid">
+                    <button class="card" data-toast="模拟跳转到推荐玩法 A">
+                      <strong>推荐玩法 A</strong>
+                      <span>低门槛、高收益，适合回归第一天。</span>
+                    </button>
+                    <button class="card" data-toast="模拟跳转到推荐玩法 B">
+                      <strong>推荐玩法 B</strong>
+                      <span>适合完成基础回流动作后进入。</span>
+                    </button>
+                    <button class="card" data-toast="模拟打开版本变化摘要">
+                      <strong>版本变化摘要</strong>
+                      <span>帮助玩家快速建立当前版本认知。</span>
+                    </button>
+                    <div class="placeholder">
+                      <strong>内容封面占位</strong>
+                      <span>适用于活动玩法或版本重点图</span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+
+              <aside class="stack">
+                <section class="panel section side-panel">
+                  <h3>推荐路线</h3>
+                  <div class="card">
+                    <strong>第一步</strong>
+                    <span>完成签到与追赶玩法，拿回即时收益。</span>
+                  </div>
+                  <div class="card">
+                    <strong>第二步</strong>
+                    <span>查看版本重点活动和资源回收路径。</span>
+                  </div>
+                  <div class="card">
+                    <strong>第三步</strong>
+                    <span>返回长期系统，继续稳定留存。</span>
+                  </div>
+                </section>
+              </aside>
+            </div>
+          </section>
+        </main>
+      </div>
+
+      <footer class="panel footer">
+        <div class="footer-note">
+          <strong id="footer-title">当前建议</strong>
+          <span id="footer-copy">先从重逢签到或回归进程开始，快速拿到即时收益。</span>
+        </div>
+        <div class="footer-actions">
+          <button class="action-button" id="back-home" disabled>已在总览</button>
+          <button class="action-button" id="primary-action">查看今日任务</button>
+        </div>
+      </footer>
+    </div>
+
+    <div class="overlay-shell active" id="welcome-overlay">
+      <div class="overlay-card">
+        <h2>欢迎回归</h2>
+        <p>先展示即时利益，再把玩家送到回归总览页。</p>
+        <div class="overlay-grid">
+          <div class="reward-cell">
+            <strong>回归礼盒</strong>
+            <span>即时可得</span>
+          </div>
+          <div class="reward-cell">
+            <strong>补给材料</strong>
+            <span>即时可得</span>
+          </div>
+          <div class="reward-cell">
+            <strong>保护加成</strong>
+            <span>已开启</span>
+          </div>
+          <div class="reward-cell current">
+            <strong>重逢任务</strong>
+            <span>待进入</span>
+          </div>
+        </div>
+        <div class="overlay-actions">
+          <button class="action-button" id="enter-comeback">进入回归</button>
+          <button class="action-button" id="close-welcome">稍后查看</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="overlay-shell" id="reward-preview">
+      <div class="overlay-card">
+        <h2>奖励预览</h2>
+        <p>这里模拟高价值奖励的放大预览层，仅在明确操作时叠加显示。</p>
+        <div class="overlay-grid">
+          <div class="reward-cell current">
+            <strong>主奖励</strong>
+            <span>高价值展示</span>
+          </div>
+          <div class="reward-cell">
+            <strong>试用效果</strong>
+            <span>可预览</span>
+          </div>
+          <div class="reward-cell">
+            <strong>领取条件</strong>
+            <span>查看说明</span>
+          </div>
+          <div class="reward-cell">
+            <strong>附加福利</strong>
+            <span>同步展示</span>
+          </div>
+        </div>
+        <div class="overlay-actions">
+          <button class="action-button" data-toast="模拟进入奖励流程">继续操作</button>
+          <button class="action-button" data-modal-close="reward-preview">关闭预览</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <script>
+    const screens = Array.from(document.querySelectorAll(".screen"));
+    const navButtons = Array.from(document.querySelectorAll(".nav-button"));
+    const pageTitle = document.getElementById("page-title");
+    const footerTitle = document.getElementById("footer-title");
+    const footerCopy = document.getElementById("footer-copy");
+    const backHome = document.getElementById("back-home");
+    const primaryAction = document.getElementById("primary-action");
+    const welcomeOverlay = document.getElementById("welcome-overlay");
+    const toast = document.getElementById("toast");
+
+    const pageMeta = {
+      "page.hub": {
+        title: "回归总览",
+        footerTitle: "当前建议",
+        footerCopy: "先从重逢签到或回归进程开始，快速拿到即时收益。",
+        primaryLabel: "查看今日任务",
+        primaryToast: "今日优先：先签到，再补回归进程。"
+      },
+      "page.progress": {
+        title: "回归进程",
+        footerTitle: "进程建议",
+        footerCopy: "先补当前阶段缺口，再领取节点奖励，最后回到总览查看下一步。",
+        primaryLabel: "前往推荐任务",
+        primaryToast: "模拟跳转到当前推荐任务。"
+      },
+      "page.signin": {
+        title: "重逢签到",
+        footerTitle: "签到建议",
+        footerCopy: "优先领取今日签到，再确认七日终极奖励的追逐节奏。",
+        primaryLabel: "立即领取",
+        primaryToast: "模拟领取今日签到奖励。"
+      },
+      "page.catchup": {
+        title: "追赶助力",
+        footerTitle: "追赶建议",
+        footerCopy: "先做低门槛玩法建立信心，再逐步回到长线系统。",
+        primaryLabel: "进入追赶玩法",
+        primaryToast: "模拟进入当前推荐的追赶玩法。"
+      },
+      "page.high_value_reward": {
+        title: "回归好礼",
+        footerTitle: "福利建议",
+        footerCopy: "先看高价值奖励规则，再决定领取、试用还是购买。",
+        primaryLabel: "预览奖励",
+        primaryToast: "模拟打开高价值奖励预览。"
+      },
+      "page.content_guidance": {
+        title: "版本指引",
+        footerTitle: "路线建议",
+        footerCopy: "先确认版本重点，再决定把回流时间投入到哪里最划算。",
+        primaryLabel: "查看推荐内容",
+        primaryToast: "模拟打开当前最推荐的版本内容。"
+      }
+    };
+
+    let currentPage = "page.hub";
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => {
+        toast.classList.remove("show");
+      }, 1500);
+    }
+
+    function closeModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) {
+        modal.classList.remove("active");
+      }
+    }
+
+    function setPage(id) {
+      currentPage = id;
+      screens.forEach((screen) => {
+        screen.classList.toggle("active", screen.id === id);
+      });
+
+      navButtons.forEach((button) => {
+        button.classList.toggle("active", button.dataset.pageTarget === id);
+      });
+
+      const meta = pageMeta[id];
+      if (meta) {
+        pageTitle.textContent = meta.title;
+        footerTitle.textContent = meta.footerTitle;
+        footerCopy.textContent = meta.footerCopy;
+        primaryAction.textContent = meta.primaryLabel;
+        primaryAction.dataset.toast = meta.primaryToast;
+      }
+
+      if (id === "page.hub") {
+        backHome.textContent = "已在总览";
+        backHome.disabled = true;
+      } else {
+        backHome.textContent = "返回总览";
+        backHome.disabled = false;
+      }
+
+      document.querySelectorAll(".overlay-shell").forEach((modal) => {
+        if (modal.id !== "welcome-overlay") {
+          modal.classList.remove("active");
+        }
+      });
+    }
+
+    document.querySelectorAll("[data-open]").forEach((button) => {
+      button.addEventListener("click", () => {
+        setPage(button.dataset.open);
+      });
+    });
+
+    navButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        setPage(button.dataset.pageTarget);
+      });
+    });
+
+    document.querySelectorAll("[data-toast]").forEach((button) => {
+      button.addEventListener("click", () => {
+        showToast(button.dataset.toast);
+      });
+    });
+
+    document.querySelectorAll("[data-modal-open]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const modal = document.getElementById(button.dataset.modalOpen);
+        if (modal) {
+          modal.classList.add("active");
+        }
+      });
+    });
+
+    document.querySelectorAll("[data-modal-close]").forEach((button) => {
+      button.addEventListener("click", () => {
+        closeModal(button.dataset.modalClose);
+      });
+    });
+
+    document.getElementById("enter-comeback").addEventListener("click", () => {
+      welcomeOverlay.classList.remove("active");
+      setPage("page.hub");
+    });
+
+    document.getElementById("close-welcome").addEventListener("click", () => {
+      welcomeOverlay.classList.remove("active");
+      setPage("page.hub");
+    });
+
+    backHome.addEventListener("click", () => {
+      if (!backHome.disabled) {
+        setPage("page.hub");
+      }
+    });
+
+    primaryAction.addEventListener("click", () => {
+      if (currentPage === "page.high_value_reward") {
+        document.getElementById("reward-preview").classList.add("active");
+        return;
+      }
+      if (primaryAction.dataset.toast) {
+        showToast(primaryAction.dataset.toast);
+      }
+    });
+
+    setPage("page.hub");
+  </script>
+</body>
+</html>

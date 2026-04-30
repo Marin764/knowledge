@@ -1,6 +1,6 @@
 # Game Interaction Design Wiki
 
-Last updated: 2026-04-22 | Pages: 54 | Sources: 12
+Last updated: 2026-04-29 | Pages: 54 | Sources: 12
 
 ## Games (Deep Analysis)
 - [[games/原神]] — 开放世界二次元动作 RPG (168 samples, 20 curated)
@@ -8,6 +8,7 @@ Last updated: 2026-04-22 | Pages: 54 | Sources: 12
 - [[games/星穹铁道]] — 二次元回合制领军者 (2 sources)
 - [[games/无期迷途]] — 独特美术风格叙事手游 (1 source)
 - [[games/逆水寒]] — 顶级画质开放世界武侠 (1 source)
+- [[games/剑与远征：启程]] — 竖屏绘本风放置续作 (137 samples)
 - [[games/堡垒之夜.md|堡垒之夜]] — 跨平台大逃杀 (2 sources)
 - [[games/皇室战争.md|皇室战争]] — 实时策略卡牌 (1 source)
 - [[games/荒野乱斗.md|荒野乱斗]] — 多人动作竞技 (1 source)
@@ -16,9 +17,16 @@ Last updated: 2026-04-22 | Pages: 54 | Sources: 12
 - [[games/游戏举例.md|游戏交互案例库]] — 包含《我的世界》、《哈利波特》、《部落冲突》等 12+ 游戏分析片段
 
 ## UX specs (3)
-- [[exports/战令系统-交互设计规范_V3.md]] — 手游战令系统通用设计规范 (2026-04-21)
-- [[exports/回归系统-交互设计规范_V1.md]] — 手游回归系统“三位一体”设计范式 (2026-04-21)
+- [[exports/战令系统-交互设计规范_V4.md]] — 手游战令系统页面合同与生成规范 (2026-04-27)
+- [[exports/回归系统-交互设计规范_V5.md]] — 手游回归系统生图特化版主规范，强调单次只生成一个页面 (2026-04-29)
 - [[exports/签到系统-交互设计规范_V1.md|签到系统-交互设计规范]] — 手游签到系统基础规范 (2026-04-21)
+- [回归系统界面原型 V1](../exports/回归系统-界面原型_V1.html) — 基于回归规范生成的 16:9 游戏界面稿 (2026-04-23)
+- [回归系统界面线框原型 V2](../exports/回归系统-界面线框原型_V2.html) — 严格对照规范的 16:9 多页面可交互线框稿 (2026-04-24)
+- [星穹铁道商店界面原型 V1](../exports/星穹铁道-商店界面原型_V1.html) — 基于商店主界面与世界商店控件生成的 16:9 可交互店铺稿 (2026-04-27)
+- [星铁已生成 UI 图谱 Atlas V1](../assets/star_rail_controls/atlas/generated-ui-elements-atlas-v1.png) — 已生成按钮、底板、信息条与框体的 AI 可读图谱 (2026-04-24)
+- [星铁已识别 UI 图谱 Atlas V2](../assets/star_rail_controls/atlas/recognized-ui-elements-atlas-v2.png) — 覆盖商店、合成、遗器详情、支援列表、跃迁与任务日志的扩展图谱 (2026-04-24)
+
+- [星铁已识别 UI 图谱 Atlas V3](../assets/star_rail_controls/atlas/recognized-ui-elements-atlas-v3.png) — 覆盖 `star_rail_ui/` 29 张系统截图的全量星铁 UI 图谱 (2026-04-27)
 
 ## Comparisons (1)
 - [[comparisons/战令系统：王者荣耀-vs-逆水寒.md|战令系统深度对比：王者荣耀 vs 逆水寒]] (2026-04-21)
@@ -67,7 +75,8 @@ Last updated: 2026-04-22 | Pages: 54 | Sources: 12
 - [[mechanics/战斗通行证系统.md|战斗通行证系统]]
 - [[mechanics/签到系统.md|签到系统]]
 - [[mechanics/回归系统.md|回归系统]]
-- [战令系统交互设计规范 V3](file:///../exports/%E6%88%98%E4%BB%A4%E7%B3%BB%E7%BB%9F-%E4%BA%A4%E4%BA%92%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83_V3.md) (Skill-based Spec)
+- [[exports/战令系统-交互设计规范_V4.md|战令系统交互设计规范 V4]] (Skill-based Spec)
+- [[exports/回归系统-交互设计规范_V5.md|回归系统交互设计规范 V5]] (Skill-based Spec)
 - [签到系统交互设计规范 V1](file:///../exports/%E7%AD%BE%E5%88%B0%E7%B3%BB%E7%BB%9F-%E4%BA%A4%E4%BA%92%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83_V1.md) (Skill-based Spec)
 
 ## Source Summaries (12)

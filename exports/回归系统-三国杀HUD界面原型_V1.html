@@ -1,0 +1,944 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>回归系统 - 三国杀 HUD 界面原型 V1</title>
+  <style>
+    :root {
+      --gold: #f2c56b;
+      --gold-bright: #ffe3a1;
+      --gold-deep: #8f5a1d;
+      --ink: #120d0a;
+      --panel: rgba(25, 16, 10, 0.88);
+      --panel-soft: rgba(52, 34, 20, 0.82);
+      --red: #8f2f23;
+      --green: #66d676;
+      --muted: #b9996d;
+      --text: #f8ead0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(132, 84, 28, 0.36), transparent 34%),
+        radial-gradient(circle at 12% 78%, rgba(105, 25, 16, 0.36), transparent 28%),
+        #090705;
+      color: var(--text);
+      font-family: "Microsoft YaHei", "Noto Sans SC", Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    .stage {
+      width: min(100vw, calc(100vh * 16 / 9));
+      aspect-ratio: 16 / 9;
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(7, 5, 4, 0.96), rgba(30, 18, 10, 0.7) 44%, rgba(9, 6, 4, 0.96)),
+        url("../assets/three_kingdoms_kill_controls/patterns/event/sgs-pattern-event-layout.png") center / cover no-repeat;
+      box-shadow: 0 0 0 1px #4e341d, 0 34px 110px rgba(0, 0, 0, 0.72);
+      isolation: isolate;
+    }
+
+    .stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.32), transparent 20%, rgba(0, 0, 0, 0.48)),
+        radial-gradient(circle at 46% 48%, rgba(255, 214, 126, 0.16), transparent 28%),
+        repeating-linear-gradient(90deg, rgba(255, 224, 144, 0.028) 0 1px, transparent 1px 7px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .top-hud {
+      position: absolute;
+      left: 2.3%;
+      right: 2.3%;
+      top: 2.1%;
+      height: 8.2%;
+      z-index: 3;
+      display: grid;
+      grid-template-columns: 23% 1fr 25%;
+      align-items: center;
+      gap: 1.4%;
+    }
+
+    .title-block {
+      height: 100%;
+      padding: 0.45rem 1rem 0.35rem 1.25rem;
+      background: linear-gradient(90deg, rgba(55, 28, 15, 0.92), rgba(20, 12, 8, 0.72));
+      border: 1px solid rgba(232, 177, 88, 0.62);
+      box-shadow: inset 0 0 0 1px rgba(255, 237, 179, 0.16), 0 0 22px rgba(0, 0, 0, 0.56);
+      clip-path: polygon(0 0, 94% 0, 100% 50%, 94% 100%, 0 100%, 5% 50%);
+    }
+
+    .title-block h1 {
+      margin: 0;
+      font-size: clamp(20px, 2.2vw, 35px);
+      line-height: 1;
+      letter-spacing: 0;
+      color: var(--gold-bright);
+      text-shadow: 0 2px 2px #000, 0 0 18px rgba(248, 188, 75, 0.6);
+    }
+
+    .title-block span,
+    .status-ribbon,
+    .resource-pill,
+    .back-btn {
+      white-space: nowrap;
+    }
+
+    .title-block span {
+      display: block;
+      margin-top: 0.24rem;
+      color: #d8b27c;
+      font-size: clamp(10px, 0.95vw, 15px);
+    }
+
+    .status-ribbon {
+      justify-self: start;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      height: 64%;
+      padding: 0 1.15rem;
+      border: 1px solid rgba(226, 188, 114, 0.52);
+      background: linear-gradient(90deg, rgba(23, 48, 31, 0.92), rgba(43, 31, 17, 0.78));
+      box-shadow: inset 0 0 16px rgba(130, 221, 108, 0.16);
+      color: #dff5be;
+      font-size: clamp(12px, 1vw, 17px);
+    }
+
+    .status-dot {
+      width: 0.75rem;
+      height: 0.75rem;
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 12px rgba(102, 214, 118, 0.9);
+      flex: none;
+    }
+
+    .resource-row {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 0.65rem;
+      height: 100%;
+    }
+
+    .resource-pill,
+    .back-btn {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(230, 182, 95, 0.55);
+      background: linear-gradient(180deg, rgba(47, 29, 18, 0.94), rgba(16, 10, 7, 0.94));
+      color: #f1d49d;
+      box-shadow: inset 0 0 0 1px rgba(255, 237, 178, 0.14);
+      font-size: clamp(12px, 0.95vw, 15px);
+    }
+
+    .resource-pill {
+      padding: 0 0.9rem;
+      gap: 0.42rem;
+      border-radius: 2px;
+    }
+
+    .coin {
+      width: 1.2rem;
+      height: 1.2rem;
+      border-radius: 999px;
+      background: radial-gradient(circle at 35% 30%, #fff3a7, #d89a2e 56%, #754514 100%);
+      box-shadow: 0 0 10px rgba(232, 179, 75, 0.42);
+    }
+
+    .back-btn {
+      width: 3.1rem;
+      border-radius: 50%;
+      font-size: 1.35rem;
+      cursor: pointer;
+    }
+
+    .left-rail {
+      position: absolute;
+      left: 2.1%;
+      top: 13.4%;
+      width: 12.6%;
+      height: 75%;
+      z-index: 4;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5%;
+      padding: 0.8% 0.25%;
+    }
+
+    .rail-source {
+      position: absolute;
+      inset: -2% 12% -1% -18%;
+      width: 118%;
+      height: 104%;
+      object-fit: fill;
+      opacity: 0.22;
+      pointer-events: none;
+      filter: saturate(1.25) contrast(1.05);
+    }
+
+    .tab {
+      position: relative;
+      min-height: 62px;
+      height: 18%;
+      display: grid;
+      place-items: center;
+      padding: 0 0.4rem;
+      color: #cba371;
+      cursor: pointer;
+      border: 1px solid rgba(176, 118, 56, 0.58);
+      background:
+        linear-gradient(90deg, rgba(28, 14, 10, 0.94), rgba(66, 33, 19, 0.86)),
+        linear-gradient(180deg, rgba(255, 210, 121, 0.14), transparent 48%, rgba(0, 0, 0, 0.28));
+      box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.64), 0 8px 16px rgba(0, 0, 0, 0.34);
+      clip-path: polygon(6% 0, 100% 0, 92% 50%, 100% 100%, 6% 100%, 0 50%);
+      font-size: clamp(13px, 1.06vw, 18px);
+      text-shadow: 0 2px 1px #000;
+      transition: transform 150ms ease, filter 150ms ease;
+    }
+
+    .tab:hover {
+      transform: translateX(4px);
+      filter: brightness(1.12);
+    }
+
+    .tab.active {
+      color: #fff1bc;
+      border-color: rgba(255, 219, 139, 0.9);
+      background:
+        linear-gradient(90deg, rgba(93, 39, 18, 0.98), rgba(166, 94, 32, 0.92)),
+        linear-gradient(180deg, rgba(255, 236, 164, 0.18), transparent);
+      box-shadow: inset 0 0 20px rgba(255, 218, 110, 0.28), 0 0 24px rgba(244, 171, 67, 0.28);
+    }
+
+    .main-panel {
+      position: absolute;
+      left: 14.2%;
+      top: 10.8%;
+      width: 83.5%;
+      height: 84.5%;
+      z-index: 2;
+      padding: 4.3% 3.4% 3.3% 4%;
+    }
+
+    .frame-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      opacity: 0.96;
+      filter: drop-shadow(0 20px 38px rgba(0, 0, 0, 0.64));
+      z-index: -1;
+    }
+
+    .panel-content {
+      height: 100%;
+      display: grid;
+      grid-template-columns: 38% 37% 21%;
+      grid-template-rows: 58% 39%;
+      gap: 2.2%;
+    }
+
+    .hero-stage,
+    .mission-zone,
+    .reward-zone,
+    .guide-zone,
+    .entry-card,
+    .task-row {
+      border: 1px solid rgba(214, 158, 73, 0.52);
+      background:
+        linear-gradient(180deg, rgba(58, 34, 20, 0.74), rgba(19, 13, 9, 0.88)),
+        radial-gradient(circle at 30% 12%, rgba(245, 203, 113, 0.16), transparent 45%);
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 233, 173, 0.1),
+        inset 0 0 22px rgba(0, 0, 0, 0.58),
+        0 12px 24px rgba(0, 0, 0, 0.34);
+    }
+
+    .hero-stage {
+      grid-row: 1 / span 2;
+      position: relative;
+      overflow: hidden;
+      padding: 5.5% 5%;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      min-width: 0;
+    }
+
+    .section-kicker {
+      color: var(--muted);
+      font-size: clamp(12px, 1vw, 16px);
+    }
+
+    .section-title {
+      margin: 0.35rem 0 0;
+      font-size: clamp(20px, 2.1vw, 34px);
+      line-height: 1.05;
+      color: var(--gold-bright);
+      text-shadow: 0 2px 2px #000, 0 0 16px rgba(234, 174, 82, 0.48);
+    }
+
+    .hero-display {
+      position: relative;
+      margin: 3.4% auto 1%;
+      width: min(70%, 238px);
+      aspect-ratio: 0.68;
+      display: grid;
+      place-items: center;
+    }
+
+    .hero-card {
+      width: 77%;
+      height: 88%;
+      object-fit: cover;
+      border-radius: 8px;
+      box-shadow: 0 0 0 2px rgba(245, 199, 107, 0.72), 0 0 30px rgba(225, 139, 45, 0.42);
+    }
+
+    .faction-banner {
+      position: absolute;
+      left: -3%;
+      bottom: 1%;
+      width: 31%;
+      max-width: 92px;
+      filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.72));
+    }
+
+    .rank-frame {
+      position: absolute;
+      right: -1%;
+      top: -2%;
+      width: 36%;
+      max-width: 112px;
+      filter: drop-shadow(0 0 13px rgba(255, 195, 75, 0.62));
+    }
+
+    .claim-tag {
+      position: absolute;
+      top: 6%;
+      right: 4%;
+      min-width: 88px;
+      padding: 0.36rem 0.75rem;
+      border: 1px solid rgba(255, 230, 151, 0.82);
+      background: linear-gradient(180deg, #b64229, #6f2019);
+      color: #fff2bc;
+      font-size: clamp(12px, 0.95vw, 15px);
+      text-align: center;
+      box-shadow: 0 0 16px rgba(181, 51, 34, 0.48);
+    }
+
+    .hero-copy {
+      margin: 0;
+      color: #e7c99b;
+      font-size: clamp(12px, 1.05vw, 16px);
+      line-height: 1.55;
+    }
+
+    .mission-zone {
+      padding: 3.2%;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      min-width: 0;
+    }
+
+    .zone-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      min-height: 38px;
+      margin-bottom: 2.6%;
+    }
+
+    .zone-head h2 {
+      margin: 0;
+      color: var(--gold-bright);
+      font-size: clamp(18px, 1.55vw, 25px);
+      text-shadow: 0 2px 2px #000;
+    }
+
+    .mini-badge {
+      padding: 0.32rem 0.62rem;
+      border: 1px solid rgba(172, 226, 131, 0.72);
+      color: #dff8c0;
+      background: rgba(25, 65, 31, 0.62);
+      font-size: clamp(11px, 0.8vw, 13px);
+      white-space: nowrap;
+    }
+
+    .entry-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: repeat(2, 1fr);
+      gap: 3.5%;
+      min-height: 0;
+    }
+
+    .entry-card {
+      position: relative;
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 0.75rem;
+      align-items: center;
+      padding: 0.74rem;
+      min-height: 82px;
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .entry-card.active-entry {
+      border-color: rgba(255, 218, 126, 0.92);
+      box-shadow: inset 0 0 0 1px rgba(255, 236, 177, 0.18), 0 0 20px rgba(245, 174, 67, 0.2);
+    }
+
+    .troop-icon {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.58));
+    }
+
+    .entry-title {
+      font-size: clamp(14px, 1.08vw, 18px);
+      color: #f7dfaa;
+      font-weight: 700;
+      margin-bottom: 0.22rem;
+    }
+
+    .entry-desc {
+      color: #bd9d73;
+      font-size: clamp(11px, 0.86vw, 13px);
+      line-height: 1.35;
+    }
+
+    .state-chip {
+      position: absolute;
+      top: 7px;
+      right: 7px;
+      padding: 0.2rem 0.46rem;
+      font-size: clamp(10px, 0.78vw, 12px);
+      border: 1px solid rgba(255, 220, 137, 0.62);
+      background: rgba(119, 55, 25, 0.86);
+      color: #ffe9af;
+    }
+
+    .state-chip.done {
+      background: rgba(30, 95, 47, 0.82);
+      color: #dbffca;
+    }
+
+    .state-chip.locked {
+      border-color: rgba(150, 130, 106, 0.48);
+      color: #9b8d80;
+      background: rgba(34, 30, 28, 0.86);
+    }
+
+    .checkmark {
+      position: absolute;
+      right: 8px;
+      bottom: 6px;
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.55));
+    }
+
+    .reward-zone {
+      grid-row: 1 / span 2;
+      padding: 7% 7% 6%;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      min-width: 0;
+    }
+
+    .reward-card {
+      position: relative;
+      align-self: center;
+      width: 86%;
+      max-width: 190px;
+      margin: 0 auto;
+      aspect-ratio: 0.68;
+      display: grid;
+      place-items: center;
+    }
+
+    .reward-card .hero-card {
+      width: 82%;
+      height: 88%;
+    }
+
+    .reward-glow {
+      position: absolute;
+      inset: 6% 3%;
+      border-radius: 45%;
+      background: radial-gradient(circle, rgba(255, 216, 111, 0.28), transparent 62%);
+      filter: blur(3px);
+      z-index: -1;
+    }
+
+    .reward-title {
+      margin: 0;
+      color: #fff0b8;
+      font-size: clamp(16px, 1.32vw, 23px);
+      text-align: center;
+      text-shadow: 0 2px 2px #000;
+    }
+
+    .reward-meta {
+      margin: 0.35rem 0 0;
+      text-align: center;
+      color: #d8b685;
+      font-size: clamp(11px, 0.9vw, 14px);
+    }
+
+    .guide-zone {
+      padding: 3% 3.2%;
+      display: grid;
+      grid-template-columns: 23% 1fr;
+      gap: 2.5%;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .advisor-card {
+      position: relative;
+      height: 100%;
+      min-height: 150px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(180deg, rgba(69, 43, 24, 0.78), rgba(18, 12, 8, 0.82));
+      border: 1px solid rgba(219, 166, 81, 0.4);
+      overflow: hidden;
+    }
+
+    .advisor-card img {
+      width: 90%;
+      height: 94%;
+      object-fit: cover;
+      border-radius: 6px;
+      filter: saturate(1.08);
+    }
+
+    .guide-copy {
+      min-width: 0;
+    }
+
+    .guide-copy h2 {
+      margin: 0 0 0.4rem;
+      color: var(--gold-bright);
+      font-size: clamp(17px, 1.45vw, 24px);
+    }
+
+    .guide-copy p {
+      margin: 0;
+      color: #d5b98d;
+      font-size: clamp(12px, 1vw, 16px);
+      line-height: 1.6;
+    }
+
+    .task-list {
+      margin-top: 0.85rem;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.7rem;
+    }
+
+    .task-row {
+      min-height: 54px;
+      padding: 0.5rem 0.65rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #ecd1a5;
+      font-size: clamp(11px, 0.85vw, 13px);
+    }
+
+    .tiny-icon {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      flex: none;
+    }
+
+    .action-bar {
+      position: absolute;
+      right: 5.6%;
+      bottom: 5.2%;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .game-btn {
+      position: relative;
+      min-width: 156px;
+      min-height: 56px;
+      padding: 0 1.2rem;
+      border: 0;
+      color: #fff1bc;
+      font-size: clamp(16px, 1.35vw, 22px);
+      font-weight: 800;
+      text-shadow: 0 2px 2px rgba(0, 0, 0, 0.82);
+      cursor: pointer;
+      background:
+        linear-gradient(180deg, rgba(255, 236, 149, 0.36), transparent 46%),
+        linear-gradient(180deg, #b66d26, #6b2d14);
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 235, 168, 0.88),
+        inset 0 -8px 18px rgba(50, 20, 8, 0.42),
+        0 8px 18px rgba(0, 0, 0, 0.46),
+        0 0 18px rgba(235, 169, 66, 0.3);
+      clip-path: polygon(8% 0, 92% 0, 100% 50%, 92% 100%, 8% 100%, 0 50%);
+    }
+
+    .game-btn.secondary {
+      min-width: 130px;
+      color: #e5c595;
+      background:
+        linear-gradient(180deg, rgba(255, 236, 149, 0.12), transparent 50%),
+        linear-gradient(180deg, #4f3120, #1b120d);
+      box-shadow: inset 0 0 0 1px rgba(192, 140, 75, 0.76), 0 8px 16px rgba(0, 0, 0, 0.36);
+    }
+
+    .button-reference {
+      position: absolute;
+      left: -42px;
+      bottom: -48px;
+      width: 130px;
+      opacity: 0.18;
+      pointer-events: none;
+      filter: saturate(1.1);
+    }
+
+    .floating-note {
+      position: absolute;
+      left: 17.3%;
+      bottom: 5.8%;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      min-height: 42px;
+      padding: 0 1rem;
+      background: rgba(12, 8, 6, 0.74);
+      border: 1px solid rgba(211, 157, 75, 0.44);
+      color: #d8b988;
+      font-size: clamp(11px, 0.9vw, 14px);
+    }
+
+    .floating-note img {
+      width: 30px;
+      height: 30px;
+      object-fit: contain;
+    }
+
+    .locked-overlay {
+      filter: grayscale(0.7) brightness(0.68);
+    }
+
+    @media (max-width: 900px) {
+      .top-hud {
+        grid-template-columns: 30% 1fr 24%;
+      }
+
+      .left-rail {
+        width: 13.6%;
+      }
+
+      .main-panel {
+        left: 15%;
+        width: 82.8%;
+      }
+
+      .entry-card {
+        grid-template-columns: 42px 1fr;
+        padding: 0.5rem;
+      }
+
+      .troop-icon {
+        width: 40px;
+        height: 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage" aria-label="三国杀风格回归系统总览界面">
+    <header class="top-hud">
+      <div class="title-block">
+        <h1>故友归来</h1>
+        <span>回归中心 · 今日推荐</span>
+      </div>
+      <div class="status-ribbon">
+        <span class="status-dot"></span>
+        <span>回归护佑中</span>
+        <span>剩余 13 天</span>
+      </div>
+      <div class="resource-row">
+        <div class="resource-pill"><span class="coin"></span><span>4680</span></div>
+        <div class="resource-pill"><span class="coin"></span><span>120</span></div>
+        <button class="back-btn" type="button" aria-label="返回">×</button>
+      </div>
+    </header>
+
+    <nav class="left-rail" aria-label="回归系统导航">
+      <img class="rail-source" src="../assets/three_kingdoms_kill_controls/components/tab/sgs-tab-primary-left-rail.png" alt="" />
+      <button class="tab active" type="button" data-panel="hub">回归总览</button>
+      <button class="tab" type="button" data-panel="signin">七日签到</button>
+      <button class="tab" type="button" data-panel="catchup">追赶任务</button>
+      <button class="tab" type="button" data-panel="reward">武将福利</button>
+      <button class="tab" type="button" data-panel="guide">版本情报</button>
+    </nav>
+
+    <section class="main-panel">
+      <img class="frame-img" src="../assets/three_kingdoms_kill_controls/components/modal/sgs-modal-large-frame.png" alt="" />
+      <div class="panel-content">
+        <section class="hero-stage" aria-label="当前回归焦点奖励">
+          <div>
+            <div class="section-kicker">本期回归钩子</div>
+            <h2 class="section-title" id="heroTitle">名将归阵礼</h2>
+          </div>
+          <div class="hero-display">
+            <div class="reward-glow"></div>
+            <img class="hero-card" id="mainHeroCard" src="../assets/three_kingdoms_kill_controls/components/hero-card/sgs-hero-card-02.png" alt="回归武将卡面" />
+            <img class="faction-banner" id="mainFaction" src="../assets/three_kingdoms_kill_controls/components/faction/sgs-faction-banner-shu.png" alt="势力竖条" />
+            <img class="rank-frame" id="mainRank" src="../assets/three_kingdoms_kill_controls/components/hero-frame/sgs-hero-frame-gold-legend.png" alt="武将阶框" />
+            <div class="claim-tag" id="heroState">可领取</div>
+          </div>
+          <p class="hero-copy" id="heroCopy">回归首日解锁限定武将体验与补给礼，先领取奖励，再进入追赶任务补齐进度。</p>
+        </section>
+
+        <section class="mission-zone" aria-label="回归入口区">
+          <div class="zone-head">
+            <h2 id="entryTitle">今日先做什么</h2>
+            <span class="mini-badge">总览分发型</span>
+          </div>
+          <div class="entry-grid">
+            <article class="entry-card active-entry" data-entry="signin">
+              <img class="troop-icon" src="../assets/three_kingdoms_kill_controls/components/troop/sgs-troop-icon-15.png" alt="" />
+              <div>
+                <div class="entry-title">今日签到</div>
+                <div class="entry-desc">首日补给已备好，领取后开启后续大奖。</div>
+              </div>
+              <span class="state-chip">可领取</span>
+            </article>
+            <article class="entry-card" data-entry="catchup">
+              <img class="troop-icon" src="../assets/three_kingdoms_kill_controls/components/troop/sgs-troop-icon-16.png" alt="" />
+              <div>
+                <div class="entry-title">追赶任务</div>
+                <div class="entry-desc">完成 3 项任务，领取名将令与经验加成。</div>
+              </div>
+              <span class="state-chip">进行中</span>
+            </article>
+            <article class="entry-card" data-entry="reward">
+              <img class="troop-icon" src="../assets/three_kingdoms_kill_controls/components/troop/sgs-troop-icon-03.png" alt="" />
+              <div>
+                <div class="entry-title">武将福利</div>
+                <div class="entry-desc">高阶武将体验与返场皮肤限时开放。</div>
+              </div>
+              <span class="state-chip locked">未解锁</span>
+            </article>
+            <article class="entry-card" data-entry="guide">
+              <img class="troop-icon" src="../assets/three_kingdoms_kill_controls/components/troop/sgs-troop-icon-13.png" alt="" />
+              <div>
+                <div class="entry-title">版本情报</div>
+                <div class="entry-desc">推荐模式、热门阵容和回归路线。</div>
+              </div>
+              <span class="state-chip done">已查看</span>
+              <img class="checkmark" src="../assets/three_kingdoms_kill_controls/components/icon/sgs-icon-checkmark.png" alt="已完成" />
+            </article>
+          </div>
+        </section>
+
+        <aside class="reward-zone" aria-label="高价值奖励预览">
+          <div>
+            <div class="section-kicker">高价值福利</div>
+            <h2 class="reward-title" id="rewardTitle">回归名将任选</h2>
+            <p class="reward-meta" id="rewardMeta">完成 3 日任务后解锁</p>
+          </div>
+          <div class="reward-card">
+            <div class="reward-glow"></div>
+            <img class="hero-card" id="sideHeroCard" src="../assets/three_kingdoms_kill_controls/components/hero-card/sgs-hero-card-07.png" alt="奖励武将卡面" />
+            <img class="rank-frame" src="../assets/three_kingdoms_kill_controls/components/hero-frame/sgs-hero-frame-red-elite.png" alt="奖励阶框" />
+          </div>
+          <div class="mini-badge" id="rewardState">第 3 日开放</div>
+        </aside>
+
+        <section class="guide-zone" aria-label="辅助引导区">
+          <div class="advisor-card">
+            <img id="advisorCard" src="../assets/three_kingdoms_kill_controls/components/hero-card/sgs-hero-card-01.png" alt="军师引导卡面" />
+          </div>
+          <div class="guide-copy">
+            <h2 id="guideTitle">军师指引</h2>
+            <p id="guideCopy">先领取回归礼，再完成追赶任务。今日目标不超过三步，避免把签到、任务、福利全部挤成一张杂乱页面。</p>
+            <div class="task-list">
+              <div class="task-row"><img class="tiny-icon" src="../assets/three_kingdoms_kill_controls/components/troop/sgs-troop-icon-01.png" alt="" />领取首日礼</div>
+              <div class="task-row"><img class="tiny-icon" src="../assets/three_kingdoms_kill_controls/components/troop/sgs-troop-icon-09.png" alt="" />完成 1 场对局</div>
+              <div class="task-row locked-overlay"><img class="tiny-icon" src="../assets/three_kingdoms_kill_controls/components/troop/sgs-troop-icon-20.png" alt="" />明日解锁</div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <div class="floating-note">
+      <img src="../assets/three_kingdoms_kill_controls/components/troop/sgs-troop-icon-08.png" alt="" />
+      <span>回归保护：本周对局经验与铜钱收益提升</span>
+    </div>
+
+    <div class="action-bar">
+      <img class="button-reference" src="../assets/three_kingdoms_kill_controls/components/button/sgs-button-primary-states.png" alt="" />
+      <button class="game-btn secondary" type="button">查看规则</button>
+      <button class="game-btn" type="button" id="primaryAction">前往领取</button>
+    </div>
+  </main>
+
+  <script>
+    const panels = {
+      hub: {
+        title: "名将归阵礼",
+        copy: "回归首日解锁限定武将体验与补给礼，先领取奖励，再进入追赶任务补齐进度。",
+        state: "可领取",
+        hero: "../assets/three_kingdoms_kill_controls/components/hero-card/sgs-hero-card-02.png",
+        side: "../assets/three_kingdoms_kill_controls/components/hero-card/sgs-hero-card-07.png",
+        faction: "../assets/three_kingdoms_kill_controls/components/faction/sgs-faction-banner-shu.png",
+        rank: "../assets/three_kingdoms_kill_controls/components/hero-frame/sgs-hero-frame-gold-legend.png",
+        entryTitle: "今日先做什么",
+        rewardTitle: "回归名将任选",
+        rewardMeta: "完成 3 日任务后解锁",
+        rewardState: "第 3 日开放",
+        guideTitle: "军师指引",
+        guideCopy: "先领取回归礼，再完成追赶任务。今日目标不超过三步，避免把签到、任务、福利全部挤成一张杂乱页面。",
+        action: "前往领取"
+      },
+      signin: {
+        title: "七日归阵签到",
+        copy: "今日格位可领取。后续奖励只做预览，不铺满整页，保持总览页的主次层级。",
+        state: "今日可领",
+        hero: "../assets/three_kingdoms_kill_controls/components/hero-card/sgs-hero-card-03.png",
+        side: "../assets/three_kingdoms_kill_controls/components/hero-card/sgs-hero-card-08.png",
+        faction: "../assets/three_kingdoms_kill_controls/components/faction/sgs-faction-banner-wu.png",
+        rank: "../assets/three_kingdoms_kill_controls/components/hero-frame/sgs-hero-frame-red-elite.png",
+        entryTitle: "签到奖励承接",
+        rewardTitle: "第七日大奖",
+        rewardMeta: "累计签到可预览",
+        rewardState: "后续解锁",
+        guideTitle: "今日领取",
+        guideCopy: "签到页入口被收束成总览卡片。这里强调今天可领、已领和锁定状态，而不是展开完整七日格子。",
+        action: "今日领取"
+      },
+      catchup: {
+        title: "追赶军令",
+        copy: "推荐低门槛玩法与收益加成，帮助回归玩家快速恢复战力和资源储备。",
+        state: "进行中",
+        hero: "../assets/three_kingdoms_kill_controls/components/hero-card/sgs-hero-card-06.png",
+        side: "../assets/three_kingdoms_kill_controls/components/hero-card/sgs-hero-card-04.png",
+        faction: "../assets/three_kingdoms_kill_controls/components/faction/sgs-faction-banner-wei.png",
+        rank: "../assets/three_kingdoms_kill_controls/components/hero-frame/sgs-hero-frame-blue-silver.png",
+        entryTitle: "追赶路径",
+        rewardTitle: "双倍收益令",
+        rewardMeta: "完成 1 场推荐玩法",
+        rewardState: "护佑中",
+        guideTitle: "推荐路线",
+        guideCopy: "先打推荐玩法，再领取追赶任务奖励。回归 Buff 保持外显，降低玩家重新上手的压力。",
+        action: "前往任务"
+      },
+      reward: {
+        title: "武将福利",
+        copy: "高价值奖励作为回归钩子被放在主舞台，强调武将卡面、阶框和明确领取行动。",
+        state: "待解锁",
+        hero: "../assets/three_kingdoms_kill_controls/components/hero-card/sgs-hero-card-09.png",
+        side: "../assets/three_kingdoms_kill_controls/components/hero-card/sgs-hero-card-10.png",
+        faction: "../assets/three_kingdoms_kill_controls/components/faction/sgs-faction-banner-qun.png",
+        rank: "../assets/three_kingdoms_kill_controls/components/hero-frame/sgs-hero-frame-gold-legend.png",
+        entryTitle: "福利预览",
+        rewardTitle: "限定皮肤体验",
+        rewardMeta: "回归第 5 日开放",
+        rewardState: "未解锁",
+        guideTitle: "奖励说明",
+        guideCopy: "福利区只保留大奖与规则摘要，不混入完整任务树，右下操作保持清晰的下一步。",
+        action: "查看福利"
+      },
+      guide: {
+        title: "版本情报",
+        copy: "用推荐内容卡告诉玩家现在值得回到哪里玩，避免让回归玩家面对过多入口。",
+        state: "已查看",
+        hero: "../assets/three_kingdoms_kill_controls/components/hero-card/sgs-hero-card-05.png",
+        side: "../assets/three_kingdoms_kill_controls/components/hero-card/sgs-hero-card-01.png",
+        faction: "../assets/three_kingdoms_kill_controls/components/faction/sgs-faction-banner-shen.png",
+        rank: "../assets/three_kingdoms_kill_controls/components/hero-frame/sgs-hero-frame-blue-basic.png",
+        entryTitle: "推荐内容",
+        rewardTitle: "热门玩法推荐",
+        rewardMeta: "适合回归期体验",
+        rewardState: "已推荐",
+        guideTitle: "版本去向",
+        guideCopy: "当前版本优先推荐低压力玩法和可直接获得收益的内容，主视觉仍保留武将卡牌语法。",
+        action: "前往内容"
+      }
+    };
+
+    const tabs = document.querySelectorAll(".tab");
+    const entries = document.querySelectorAll(".entry-card");
+    const fields = {
+      heroTitle: document.getElementById("heroTitle"),
+      heroCopy: document.getElementById("heroCopy"),
+      heroState: document.getElementById("heroState"),
+      mainHeroCard: document.getElementById("mainHeroCard"),
+      sideHeroCard: document.getElementById("sideHeroCard"),
+      mainFaction: document.getElementById("mainFaction"),
+      mainRank: document.getElementById("mainRank"),
+      entryTitle: document.getElementById("entryTitle"),
+      rewardTitle: document.getElementById("rewardTitle"),
+      rewardMeta: document.getElementById("rewardMeta"),
+      rewardState: document.getElementById("rewardState"),
+      guideTitle: document.getElementById("guideTitle"),
+      guideCopy: document.getElementById("guideCopy"),
+      advisorCard: document.getElementById("advisorCard"),
+      primaryAction: document.getElementById("primaryAction")
+    };
+
+    function activate(panelName) {
+      const data = panels[panelName] || panels.hub;
+      tabs.forEach((tab) => tab.classList.toggle("active", tab.dataset.panel === panelName));
+      entries.forEach((entry) => entry.classList.toggle("active-entry", entry.dataset.entry === panelName));
+      fields.heroTitle.textContent = data.title;
+      fields.heroCopy.textContent = data.copy;
+      fields.heroState.textContent = data.state;
+      fields.mainHeroCard.src = data.hero;
+      fields.sideHeroCard.src = data.side;
+      fields.advisorCard.src = data.side;
+      fields.mainFaction.src = data.faction;
+      fields.mainRank.src = data.rank;
+      fields.entryTitle.textContent = data.entryTitle;
+      fields.rewardTitle.textContent = data.rewardTitle;
+      fields.rewardMeta.textContent = data.rewardMeta;
+      fields.rewardState.textContent = data.rewardState;
+      fields.guideTitle.textContent = data.guideTitle;
+      fields.guideCopy.textContent = data.guideCopy;
+      fields.primaryAction.textContent = data.action;
+    }
+
+    tabs.forEach((tab) => tab.addEventListener("click", () => activate(tab.dataset.panel)));
+    entries.forEach((entry) => entry.addEventListener("click", () => activate(entry.dataset.entry)));
+  </script>
+</body>
+</html>
